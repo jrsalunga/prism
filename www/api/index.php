@@ -1180,9 +1180,19 @@ function postingApvhdr($id){
 
             if(!$stu->save()){
                 
+                /* commeted out
+                *       * unable to update the supplier
+                *       * no change on balace
+                *       * no item or the total amount of apv is 0
+                */
+
+                /*
+                $q = $database->last_query;
+                
                 $database->rollback(); 
-                echo json_encode($stu->result_respone(1,' Unable to post. No items/details found.'));
+                echo json_encode($stu->result_respone(1,' Unable to post. No items/details found.'. $q ));
                 exit();
+                */
 
             }
         } else {
