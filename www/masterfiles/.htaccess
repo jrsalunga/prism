@@ -1,0 +1,13 @@
+RewriteEngine on
+
+
+RewriteRule ^index(\/.*)*$ /prism/masterfiles/index.php
+RewriteRule ^category(\/.*)*$ /prism/masterfiles/category.php
+RewriteRule ^category2(\/.*)*$ /prism/masterfiles/category2.php
+RewriteRule ^item(\/.*)*$ /prism/masterfiles/item.php
+RewriteRule ^salesman(\/.*)*$ /prism/masterfiles/salesman.php
+RewriteRule ^supplier(\/.*)*$ /prism/masterfiles/supplier.php
+RewriteRule ^customer(\/.*)*$ /prism/masterfiles/customer.php
+RewriteRule ^location(\/.*)*$ /prism/masterfiles/location.php
+
+

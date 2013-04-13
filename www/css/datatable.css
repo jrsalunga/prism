@@ -1,0 +1,35 @@
+/* CSS Document */
+
+
+#datatable-item {
+    
+}
+
+#datatable-item tbody tr td {
+    width:auto;
+}
+
+#datatable-item tbody tr td:first-of-type {
+     width:15%;
+}
+
+#datatable-item tbody tr td:nth-of-type(2) {
+    width:25%;
+}
+
+
+#datatable-apvhdr tbody tr td:nth-of-type(5) {
+    width:5%;
+}
+
+#datatable-apvhdr tbody tr td:last-of-type {
+    text-align:center;
+    width:5%;
+}
+
+
+
+
+.dataTables_wrapper {
+    position:relative;
+}

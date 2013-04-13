@@ -1,0 +1,1287 @@
+-- MySQL Administrator dump 1.4
+--
+-- ------------------------------------------------------
+-- Server version	5.5.16
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
+
+--
+-- Create schema prism
+--
+
+CREATE DATABASE IF NOT EXISTS prism;
+USE prism;
+
+--
+-- Temporary table structure for view `vapvdtl`
+--
+DROP TABLE IF EXISTS `vapvdtl`;
+DROP VIEW IF EXISTS `vapvdtl`;
+CREATE TABLE `vapvdtl` (
+  `id` char(32),
+  `item` char(50),
+  `qty` decimal(9,0),
+  `unitcost` decimal(12,2),
+  `amount` decimal(15,2)
+);
+
+--
+-- Temporary table structure for view `vapvhdr`
+--
+DROP TABLE IF EXISTS `vapvhdr`;
+DROP VIEW IF EXISTS `vapvhdr`;
+CREATE TABLE `vapvhdr` (
+  `refno` char(10),
+  `date` date,
+  `location` char(50),
+  `supplier` char(50),
+  `terms` tinyint(4),
+  `totqty` decimal(9,0),
+  `totamount` decimal(15,2),
+  `totdebit` decimal(15,2),
+  `totcredit` decimal(15,2),
+  `balance` decimal(15,2),
+  `posted` tinyint(1),
+  `id` char(32)
+);
+
+--
+-- Temporary table structure for view `vcategory`
+--
+DROP TABLE IF EXISTS `vcategory`;
+DROP VIEW IF EXISTS `vcategory`;
+CREATE TABLE `vcategory` (
+  `code` char(20),
+  `descriptor` char(50),
+  `type` varchar(45),
+  `id` char(32)
+);
+
+--
+-- Temporary table structure for view `vcustomer`
+--
+DROP TABLE IF EXISTS `vcustomer`;
+DROP VIEW IF EXISTS `vcustomer`;
+CREATE TABLE `vcustomer` (
+  `id` char(32),
+  `code` char(20),
+  `descriptor` char(50),
+  `cperson` char(50),
+  `ctitle` char(50),
+  `salesman` char(50),
+  `terms` decimal(3,0),
+  `balance` decimal(15,2)
+);
+
+--
+-- Temporary table structure for view `vitem`
+--
+DROP TABLE IF EXISTS `vitem`;
+DROP VIEW IF EXISTS `vitem`;
+CREATE TABLE `vitem` (
+  `code` char(20),
+  `descriptor` char(50),
+  `type` varchar(45),
+  `category` char(50),
+  `onhand` decimal(9,0),
+  `unitprice` decimal(12,2),
+  `floorprice` decimal(12,2),
+  `unitcost` decimal(12,2),
+  `umeasure` char(10),
+  `id` char(32)
+);
+
+--
+-- Definition of table `apledger`
+--
+
+DROP TABLE IF EXISTS `apledger`;
+CREATE TABLE `apledger` (
+  `supplierid` char(32) NOT NULL,
+  `postdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `txndate` date NOT NULL,
+  `txncode` char(3) DEFAULT '',
+  `txnrefno` char(10) DEFAULT '',
+  `amount` decimal(15,2) DEFAULT '0.00',
+  `prevbal` decimal(15,2) DEFAULT '0.00',
+  `currbal` decimal(15,2) DEFAULT '0.00',
+  `id` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `SUPPLIERID` (`supplierid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `apledger`
+--
+
+/*!40000 ALTER TABLE `apledger` DISABLE KEYS */;
+INSERT INTO `apledger` (`supplierid`,`postdate`,`txndate`,`txncode`,`txnrefno`,`amount`,`prevbal`,`currbal`,`id`) VALUES 
+ ('9a5f24f2824111e2b7ed5404a67007de','2013-04-11 13:17:09','2013-04-11','APV','005','108.00','9326.50','9434.50','0edb6958a26711e286235404a67007de'),
+ ('9a5f24f2824111e2b7ed5404a67007de','2013-04-11 13:04:56','2013-04-11','APV','004','660.50','4051.00','4711.50','59ed95eda26511e286235404a67007de'),
+ ('9a5f24f2824111e2b7ed5404a67007de','2013-04-11 12:58:19','2013-04-11','APV','002','3715.00','336.00','4051.00','6d76c011a26411e286235404a67007de'),
+ ('9a5f24f2824111e2b7ed5404a67007de','2013-04-11 13:34:21','2013-04-11','APV','007','1050.00','9824.50','10874.50','75fbc873a26911e286235404a67007de'),
+ ('9a5f24f2824111e2b7ed5404a67007de','2013-04-11 12:38:09','2013-04-11','APV','001','336.00','0.00','336.00','9bd48997a26111e286235404a67007de'),
+ ('9a5f24f2824111e2b7ed5404a67007de','2013-04-11 13:49:45','2013-04-11','APV','008','36.00','10874.50','10910.50','9c691e09a26b11e286235404a67007de'),
+ ('9a5f24f2824111e2b7ed5404a67007de','2013-04-11 13:22:22','2013-04-11','APV','006','390.00','9434.50','9824.50','c9611313a26711e286235404a67007de'),
+ ('9a5f24f2824111e2b7ed5404a67007de','2013-04-11 13:15:58','2013-04-11','APV','003','4615.00','4711.50','9326.50','e49c10d5a26611e286235404a67007de');
+/*!40000 ALTER TABLE `apledger` ENABLE KEYS */;
+
+
+--
+-- Definition of table `apvdtl`
+--
+
+DROP TABLE IF EXISTS `apvdtl`;
+CREATE TABLE `apvdtl` (
+  `apvhdrid` char(32) NOT NULL,
+  `itemid` char(32) NOT NULL,
+  `qty` decimal(9,0) DEFAULT '0',
+  `unitcost` decimal(12,2) DEFAULT '0.00',
+  `amount` decimal(15,2) DEFAULT '0.00',
+  `id` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `APVHDRID` (`apvhdrid`),
+  KEY `ITEMID` (`itemid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `apvdtl`
+--
+
+/*!40000 ALTER TABLE `apvdtl` DISABLE KEYS */;
+INSERT INTO `apvdtl` (`apvhdrid`,`itemid`,`qty`,`unitcost`,`amount`,`id`) VALUES 
+ ('715bd582a26911e286235404a67007de','eda3cde4691911e285d63085a942bd8e','15','50.00','750.00','4c9402f0573a8a9585cea58e9e6d61b7'),
+ ('dd94b88aa26611e286235404a67007de','2cf1036b7a6111e2baaf3085a942bd8e','9','445.00','4005.00','6d560cfb5f3ae2eedbd1556626072a17'),
+ ('53de4bd0a26511e286235404a67007de','04fa3a5a173d11e2b55d5404a67007de','12','31.50','378.00','6ed08fe572247150ff238b522b8851b5'),
+ ('66a25c9fa26411e286235404a67007de','ce258801691211e285d63085a942bd8e','5','65.00','325.00','9a8cdb3f565f0475f40b02202de28277'),
+ ('0a07ae35a26711e286235404a67007de','a6f86d11679a11e28b7a3085a942bd8e','9','12.00','108.00','9e67c444bdf6df445af91a88a95d5af5'),
+ ('771e6529a26111e286235404a67007de','04fa3a5a173d11e2b55d5404a67007de','6','56.00','336.00','a46951d1fd0f9e36b9313924c4705177'),
+ ('715bd582a26911e286235404a67007de','2e6246b974c311e2a6393085a942bd8e','5','60.00','300.00','b9b17f902dad85256c9f979f30b578a4'),
+ ('c6acfc6aa26711e286235404a67007de','c4676cef679a11e28b7a3085a942bd8e','6','65.00','390.00','c4f76de3dc7dd0b8a161bb470c866a8b'),
+ ('53de4bd0a26511e286235404a67007de','14a2783a691911e285d63085a942bd8e','5','56.50','282.50','ec17d90390f8d1e3ea9e14e1a9b17dd1'),
+ ('9b31dfbca26b11e286235404a67007de','04fa3a5a173d11e2b55d5404a67007de','6','6.00','36.00','ee5ffe408d0afdaf6f091b3d85f2a1ff'),
+ ('dd94b88aa26611e286235404a67007de','04fa3a5a173d11e2b55d5404a67007de','5','56.00','280.00','eeedaa4ae6ac66f8f627194624a35357'),
+ ('dd94b88aa26611e286235404a67007de','b304f7ce679511e28b7a3085a942bd8e','5','66.00','330.00','f4bb1ffec9cee1f9df3ca6e85a56f773'),
+ ('66a25c9fa26411e286235404a67007de','1f85c2f174c211e2a6393085a942bd8e','6','565.00','3390.00','fce29ca5a2d5ad194ae4571e176b8754');
+/*!40000 ALTER TABLE `apvdtl` ENABLE KEYS */;
+
+
+--
+-- Definition of table `apvhdr`
+--
+
+DROP TABLE IF EXISTS `apvhdr`;
+CREATE TABLE `apvhdr` (
+  `refno` char(10) NOT NULL,
+  `date` date NOT NULL,
+  `locationid` char(32) NOT NULL,
+  `supplierid` char(32) NOT NULL,
+  `supprefno` char(15) DEFAULT '',
+  `porefno` char(15) DEFAULT '',
+  `terms` tinyint(4) DEFAULT '0',
+  `notes` text,
+  `totqty` decimal(9,0) DEFAULT '0',
+  `totamount` decimal(15,2) DEFAULT '0.00',
+  `totdebit` decimal(15,2) DEFAULT '0.00',
+  `totcredit` decimal(15,2) DEFAULT '0.00',
+  `balance` decimal(15,2) DEFAULT '0.00',
+  `id` char(32) NOT NULL,
+  `posted` tinyint(1) DEFAULT '0',
+  `totline` decimal(9,0) DEFAULT NULL,
+  `cancelled` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `REFNO` (`refno`),
+  KEY `LOCATIONID` (`locationid`),
+  KEY `SUPPLIERID` (`supplierid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `apvhdr`
+--
+
+/*!40000 ALTER TABLE `apvhdr` DISABLE KEYS */;
+INSERT INTO `apvhdr` (`refno`,`date`,`locationid`,`supplierid`,`supprefno`,`porefno`,`terms`,`notes`,`totqty`,`totamount`,`totdebit`,`totcredit`,`balance`,`id`,`posted`,`totline`,`cancelled`) VALUES 
+ ('005','2013-04-11','a8d298fe605311e2b9743085a942bd8e','9a5f24f2824111e2b7ed5404a67007de','4654df','4654d',9,NULL,'9','108.00','0.00','0.00','108.00','0a07ae35a26711e286235404a67007de',1,NULL,0),
+ ('004','2013-04-11','a8d298fe605311e2b9743085a942bd8e','9a5f24f2824111e2b7ed5404a67007de','','',0,NULL,'17','660.50','0.00','0.00','660.50','53de4bd0a26511e286235404a67007de',1,NULL,0),
+ ('002','2013-04-11','a8d298fe605311e2b9743085a942bd8e','9a5f24f2824111e2b7ed5404a67007de','','',0,NULL,'11','3715.00','0.00','0.00','3715.00','66a25c9fa26411e286235404a67007de',1,NULL,0),
+ ('007','2013-04-11','a8d298fe605311e2b9743085a942bd8e','9a5f24f2824111e2b7ed5404a67007de','dsfdsf454','dds445',10,NULL,'20','1050.00','0.00','0.00','1050.00','715bd582a26911e286235404a67007de',1,NULL,0),
+ ('001','2013-04-11','a8d298fe605311e2b9743085a942bd8e','9a5f24f2824111e2b7ed5404a67007de','c5454','dsa5456',8,NULL,'6','336.00','0.00','0.00','336.00','771e6529a26111e286235404a67007de',1,NULL,0),
+ ('008','2013-04-11','a8d298fe605311e2b9743085a942bd8e','9a5f24f2824111e2b7ed5404a67007de','','',0,NULL,'6','36.00','0.00','0.00','36.00','9b31dfbca26b11e286235404a67007de',1,NULL,0),
+ ('006','2013-04-11','a8d298fe605311e2b9743085a942bd8e','9a5f24f2824111e2b7ed5404a67007de','','',0,NULL,'6','390.00','0.00','0.00','390.00','c6acfc6aa26711e286235404a67007de',1,NULL,0),
+ ('003','2013-04-11','a8d298fe605311e2b9743085a942bd8e','9a5f24f2824111e2b7ed5404a67007de','dfas415','4545',5,NULL,'19','4615.00','0.00','0.00','4615.00','dd94b88aa26611e286235404a67007de',1,NULL,0);
+/*!40000 ALTER TABLE `apvhdr` ENABLE KEYS */;
+
+
+--
+-- Definition of table `arledger`
+--
+
+DROP TABLE IF EXISTS `arledger`;
+CREATE TABLE `arledger` (
+  `customerid` char(32) NOT NULL,
+  `postdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `txndate` date NOT NULL,
+  `txncode` char(3) DEFAULT '',
+  `txnrefno` char(10) DEFAULT '',
+  `amount` decimal(15,2) DEFAULT '0.00',
+  `prevbal` decimal(15,2) DEFAULT '0.00',
+  `currbal` decimal(15,2) DEFAULT '0.00',
+  `id` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `CUSTOMERID` (`customerid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `arledger`
+--
+
+/*!40000 ALTER TABLE `arledger` DISABLE KEYS */;
+/*!40000 ALTER TABLE `arledger` ENABLE KEYS */;
+
+
+--
+-- Definition of table `category`
+--
+
+DROP TABLE IF EXISTS `category`;
+CREATE TABLE `category` (
+  `code` char(20) DEFAULT '',
+  `descriptor` char(50) DEFAULT '',
+  `type` tinyint(4) DEFAULT '0',
+  `id` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `CODE` (`code`),
+  KEY `DESCRIPTOR` (`descriptor`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `category`
+--
+
+/*!40000 ALTER TABLE `category` DISABLE KEYS */;
+INSERT INTO `category` (`code`,`descriptor`,`type`,`id`) VALUES 
+ ('BL','BOLLARD',1,'11bd1eb5620f11e2928c3085a942bd8e'),
+ ('CL','CEILING LIGHT',1,'15a0b419621011e2928c3085a942bd8e'),
+ ('TRKL','TRACKLIGHT',1,'21d3cf57621111e2928c3085a942bd8e'),
+ ('SPL','SPOTLIGHT',1,'3020dd1d620f11e2928c3085a942bd8e'),
+ ('FLD','FLOODLIGHT',1,'336793337b2711e28a0b3085a942bd8e'),
+ ('DCL','DISPLAY CABINET',1,'3de94e1a679811e28b7a3085a942bd8e'),
+ ('DL','DOWNLIGHT',1,'497c8c99620e11e2928c3085a942bd8e'),
+ ('STEPLIGHT','STEPLIGHT',1,'4ba5fe5b620f11e2928c3085a942bd8e'),
+ ('SM','SURFACE LIGHT',1,'57503562620f11e2928c3085a942bd8e'),
+ ('GLS','GARDEN LIGHT SPIKE',1,'58c1bf6874c411e2a6393085a942bd8e'),
+ ('DLH','HALOGEN DOWNLIGHT',1,'5b45a205679a11e28b7a3085a942bd8e'),
+ ('FL','FLOODLIGHT',1,'621bebf3620e11e2928c3085a942bd8e'),
+ ('MH','METAL HALIDE',1,'6a7b2b1a7a6e11e2baaf3085a942bd8e'),
+ ('HFCL','HALF CEILING LIGHT',1,'702224f0621011e2928c3085a942bd8e'),
+ ('BULB','BULB',1,'7217fd80620e11e2928c3085a942bd8e'),
+ ('TL','TABLE LAMP',1,'7d83f782620c11e2928c3085a942bd8e'),
+ ('HL','HANGING LIGHT',1,'7eed0afa678b11e28b7a3085a942bd8e'),
+ ('HCL','HIGH CEILING LIGHT',1,'80e9d9d4620d11e2928c3085a942bd8e'),
+ ('GLSB','GARDEN LIGHT BASE TYPE',1,'847af19c7a7511e2baaf3085a942bd8e'),
+ ('T5','MINI LITE',1,'85dbc2c4620e11e2928c3085a942bd8e'),
+ ('WL-IN','WALL LAMP INDOOR',1,'8bdc61cd620f11e2928c3085a942bd8e'),
+ ('CIR. TUBE','CIRCULAR TUBE',1,'8e3f5465621011e2928c3085a942bd8e'),
+ ('DOME','DOME',1,'96ce6f0a679911e28b7a3085a942bd8e'),
+ ('IL','INGROUND LIGHT',1,'9efbd113620f11e2928c3085a942bd8e'),
+ ('CF','CEILING FAN',1,'adeb07fb620c11e2928c3085a942bd8e'),
+ ('LCL','LOW CEILING LIGHT',1,'bb7e1866620c11e2928c3085a942bd8e'),
+ ('EL','EXIT LIGHT',1,'beff91da620f11e2928c3085a942bd8e'),
+ ('UWL','UNDERWATER LIGHT',1,'dee608e27a6d11e2baaf3085a942bd8e'),
+ ('PENDANT LIGHT','PENDANT LIGHT',1,'e3126637620f11e2928c3085a942bd8e'),
+ ('WL','WALL LAMP OUTDOOR',1,'fbccd132620b11e2928c3085a942bd8e'),
+ ('FLOOR LAMP','FLOOR LAMP',1,'fbd2c056620f11e2928c3085a942bd8e'),
+ ('PL','POST LAMP',1,'fc67cdee620e11e2928c3085a942bd8e');
+/*!40000 ALTER TABLE `category` ENABLE KEYS */;
+
+
+--
+-- Definition of table `category_type`
+--
+
+DROP TABLE IF EXISTS `category_type`;
+CREATE TABLE `category_type` (
+  `code` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `descriptor` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`code`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `category_type`
+--
+
+/*!40000 ALTER TABLE `category_type` DISABLE KEYS */;
+INSERT INTO `category_type` (`code`,`descriptor`) VALUES 
+ (1,'Product/Service'),
+ (2,'Expense');
+/*!40000 ALTER TABLE `category_type` ENABLE KEYS */;
+
+
+--
+-- Definition of table `customer`
+--
+
+DROP TABLE IF EXISTS `customer`;
+CREATE TABLE `customer` (
+  `code` char(20) DEFAULT '',
+  `descriptor` char(50) DEFAULT '',
+  `cperson` char(50) DEFAULT '',
+  `ctitle` char(50) DEFAULT '',
+  `salesmanid` char(32) NOT NULL,
+  `terms` decimal(3,0) DEFAULT '0',
+  `balance` decimal(15,2) DEFAULT '0.00',
+  `address` char(120) DEFAULT '',
+  `phone` char(20) DEFAULT '',
+  `fax` char(20) DEFAULT '',
+  `mobile` char(20) DEFAULT '',
+  `email` char(120) DEFAULT '',
+  `notes` text,
+  `id` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `CODE` (`code`),
+  KEY `DESCRIPTOR` (`descriptor`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `customer`
+--
+
+/*!40000 ALTER TABLE `customer` DISABLE KEYS */;
+/*!40000 ALTER TABLE `customer` ENABLE KEYS */;
+
+
+--
+-- Definition of table `item`
+--
+
+DROP TABLE IF EXISTS `item`;
+CREATE TABLE `item` (
+  `code` char(20) DEFAULT '',
+  `descriptor` char(50) DEFAULT '',
+  `type` tinyint(4) DEFAULT '0',
+  `categoryid` char(32) NOT NULL,
+  `umeasure` char(10) DEFAULT '',
+  `longdesc` text,
+  `picfile` char(120) DEFAULT '',
+  `onhand` decimal(9,0) DEFAULT '0',
+  `unitprice` decimal(12,2) DEFAULT '0.00',
+  `floorprice` decimal(12,2) DEFAULT '0.00',
+  `unitcost` decimal(12,2) DEFAULT '0.00',
+  `id` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `CODE` (`code`),
+  KEY `DESCRIPTOR` (`descriptor`),
+  KEY `CATEGORYID` (`categoryid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `item`
+--
+
+/*!40000 ALTER TABLE `item` DISABLE KEYS */;
+INSERT INTO `item` (`code`,`descriptor`,`type`,`categoryid`,`umeasure`,`longdesc`,`picfile`,`onhand`,`unitprice`,`floorprice`,`unitcost`,`id`) VALUES 
+ ('B04-A015/1xG9-SR','SR Surface Mounted',1,'57503562620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','00cadc877a4111e2baaf3085a942bd8e'),
+ ('A01-4004/1xE27-w','WHITE SPOTLIGHT',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','00d7ecb674c011e2a6393085a942bd8e'),
+ ('B04-E0162/1xE27-BK','BLACK die cast aluminum',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','1.00','1.00','0.00','014473827a7611e2baaf3085a942bd8e'),
+ ('B04-A7482-2B/1 SR','E27 SQUARE0 THREE SIDES',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','016bdaab74e611e2a6393085a942bd8e'),
+ ('A01-88803/1xGU10-G','OCTAGON GOLD HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','0281f626691611e285d63085a942bd8e'),
+ ('B04-G0298/1xE27-SR','SR',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','02e65ec374e511e2a6393085a942bd8e'),
+ ('B04-D0123/1xMR16','garden base type',1,'847af19c7a7511e2baaf3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','030b79bc7a7b11e2baaf3085a942bd8e'),
+ ('A01-8760/2xE27-SN','6\'\' ROUND SATIN HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','031519c8692f11e285d63085a942bd8e'),
+ ('B02-MD668/1B','BLACK',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','034718ca63ae11e284a33085a942bd8e'),
+ ('B02-MD800/8W','WHITE',1,'7eed0afa678b11e28b7a3085a942bd8e','',NULL,'','0','29000.00','21750.00','0.00','03711c69678c11e28b7a3085a942bd8e'),
+ ('B02-MB543/3B','3XE27 SMALL',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','03ae72f3679811e28b7a3085a942bd8e'),
+ ('B04-C0191H80/1xE27','STAINLESS HOUSING',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','03e43a9f7bd611e29da73085a942bd8e'),
+ ('B02-MT8011/1','YELLOW',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','04637ef3679111e28b7a3085a942bd8e'),
+ ('B02-MX694/3','ROUND WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','8000.00','6000.00','0.00','048ddb72660911e2bd7d3085a942bd8e'),
+ ('A01-5909/2xE27-GY','SQAURE GREYDIE CAST ALUM. HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','04e3d173691c11e285d63085a942bd8e'),
+ ('gfsdg','San Mig Light',1,'02471a4b1c0b11e293185404a67007de','pcs','San Miguel Beer - Lights','smbl.jpg','34','1.00','1.00','6.00','04fa3a5a173d11e2b55d5404a67007de'),
+ ('B02-MX876/12','E14 BLK & WHT',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','24000.00','18000.00','0.00','052032e0677f11e28b7a3085a942bd8e'),
+ ('A01-863/1xMR11-SN','ROUND SATIN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','05a44dfc691411e285d63085a942bd8e'),
+ ('B02-A406/6','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','32500.00','26500.00','0.00','05dcc5a165fa11e2bd7d3085a942bd8e'),
+ ('B04-A0202/2xE27-SB','SB die cast up and down',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','07adc82d7a3a11e2baaf3085a942bd8e'),
+ ('B02-MX757/4+1','SILVER',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','07c08a9e660a11e2bd7d3085a942bd8e'),
+ ('A01-0401/xMR16-SN','SQUARE SATIN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','08954f77691011e285d63085a942bd8e'),
+ ('B04-C0101/1xE27','STAINLESS',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','08e88f3474e711e2a6393085a942bd8e'),
+ ('B02-MD879/9','WHITE ROUND GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','24000.00','18000.00','0.00','0936eaab65eb11e2bd7d3085a942bd8e'),
+ ('B02-MT9592/1W','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2500.00','2000.00','0.00','0948ec8b679311e28b7a3085a942bd8e'),
+ ('MX694/3','',1,'80e9d9d4620d11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','09b3faa6678b11e28b7a3085a942bd8e'),
+ ('A01-DOME#3','METALHALIDE',1,'96ce6f0a679911e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','0a3e1cf4679a11e28b7a3085a942bd8e'),
+ ('B04-7473B/2xG9-SY','SY die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','0a8860607a3d11e2baaf3085a942bd8e'),
+ ('B04-H0234/1xE27 BK','BLACK',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','0b58e2bb74cf11e2a6393085a942bd8e'),
+ ('B28-F017-52-CR','ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','0c041d4c7fbe11e2885e3085a942bd8e'),
+ ('A01-0146/1xMR16-W','ROUND WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','0d15c234679b11e28b7a3085a942bd8e'),
+ ('B02-MX918/8+1','',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','34670.00','26000.00','0.00','0d178942678511e28b7a3085a942bd8e'),
+ ('B02-MD918/6','REC. BASE (CLEAR)',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','24000.00','18000.00','0.00','0db64aa865f311e2bd7d3085a942bd8e'),
+ ('B04-J0160/1-BK','BLACK HOUSING (300w-500w)',1,'621bebf3620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','0e61373b7bcf11e29da73085a942bd8e'),
+ ('B02-MB516/1R','RED',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','0ed291fb679711e28b7a3085a942bd8e'),
+ ('B02-MX644/6+1','BLACK',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','20800.00','15600.00','0.00','0ee589cd660811e2bd7d3085a942bd8e'),
+ ('anglr','this is a test',1,'02f5f18b173d11e2b55d5404a67007de','cp',NULL,'AngularJS-Shield-large.png','0','1.00','1.00','0.00','0f3ec17b5fb111e2897a3085a942bd8e'),
+ ('B02-0231/3 (0221/3)','CONE CLEAR GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','16670.00','12500.00','0.00','0f50226c639711e284a33085a942bd8e'),
+ ('B04-H0234/1xE27-CF','E27 socket CF',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','0f7a038b74c711e2a6393085a942bd8e'),
+ ('B04-A0107/2-SV-(SR)','SV-(SR) die cast aluminum housing up and down',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','0f80f0037a3e11e2baaf3085a942bd8e'),
+ ('B02-MX832/8xE27','',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','16670.00','12500.00','0.00','0faa38c3660b11e2bd7d3085a942bd8e'),
+ ('B04-C0235H80/1xE27','STAINLESS HOUSING',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','106bc8d67bd611e29da73085a942bd8e'),
+ ('B04-C0118/1xE27','STAINLESS',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','10c6ce9974e711e2a6393085a942bd8e'),
+ ('B04-I0322A/1xE27-BK','BK SOLUCCIONE ONLY',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','11203d9874ca11e2a6393085a942bd8e'),
+ ('B04-G0430L/1xE27 SY','ACRYLIC COVER GREY DIE CAST ALUMINUM HOUSING',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','3310.00','2480.00','0.00','112a5f9f74c611e2a6393085a942bd8e'),
+ ('A01-95200/1xGU10-G','ROUND GOLD HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','11dabee2691811e285d63085a942bd8e'),
+ ('B04-E0282/4Px1w-LED','Warm light Diecast',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1213355f7a6411e2baaf3085a942bd8e'),
+ ('A01-3043/1xE27-WH','3\'\' SQUARE WHITE HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','122c5229691211e285d63085a942bd8e'),
+ ('A01-4004/1xE27-b','BLACK SPOTLIGHT',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1252131374bf11e2a6393085a942bd8e'),
+ ('B02-TP9454/1','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2000.00','1600.00','0.00','1354f128679611e28b7a3085a942bd8e'),
+ ('B02-MD873/9','WHITE ROUND GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','24000.00','18000.00','0.00','1376d2f465eb11e2bd7d3085a942bd8e'),
+ ('B02-MB544/1','',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','14559174679811e28b7a3085a942bd8e'),
+ ('B02-MD668/1R','RED',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','146000d463ae11e284a33085a942bd8e'),
+ ('A01-550302/1xE27','5\'\' ROUND WHITE HOUSING W/ GLASS COVER',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','5','1.00','1.00','56.50','14a2783a691911e285d63085a942bd8e'),
+ ('B04-E0107/1-BK','BLACK housing only',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','2640.00','1980.00','0.00','155446d17a7b11e2baaf3085a942bd8e'),
+ ('A01-850307/2xE27','8\'\' SQUARE WHITE HOUSING PUSH GLASS',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1628c984692e11e285d63085a942bd8e'),
+ ('B02-MX907/8+4','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','30000.00','22500.00','0.00','164563b6678311e28b7a3085a942bd8e'),
+ ('A01-88803/1xGU10-R','OCTAGON RAINBOW HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','16541cea691611e285d63085a942bd8e'),
+ ('B02-MD602/3','RND WHT GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','5975.00','4780.00','0.00','16bd38fe63a311e284a33085a942bd8e'),
+ ('A01-8841/1xGU10-BK','SQUARE BLACK HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1723507f691511e285d63085a942bd8e'),
+ ('B02-MD578/4','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','12670.00','9500.00','0.00','17309f2063a211e284a33085a942bd8e'),
+ ('B04-C0159/1xE27','STAINLESS',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1795249a74e711e2a6393085a942bd8e'),
+ ('B04-1009S/1xE27-SR','E27 socket SR',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','17e3318174c811e2a6393085a942bd8e'),
+ ('B02-MT9583/1','',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2250.00','1800.00','0.00','18572902679211e28b7a3085a942bd8e'),
+ ('B02-MX881/5','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','11335.00','8500.00','0.00','18c14ab1677f11e28b7a3085a942bd8e'),
+ ('A01-450303/2xE27','ROUND WHITE HOUSING W/ FROSTED GLASS COVER',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','56','1.00','1.00','56.00','18d71a3e691311e285d63085a942bd8e'),
+ ('A01-8760/2xPLC-SN','6\'\' ROUND SATIN HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','18d851d5692f11e285d63085a942bd8e'),
+ ('B02-MD646/1','ROUND CLEAR GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','12670.00','9500.00','0.00','190145cd651b11e2abd53085a942bd8e'),
+ ('B04-C0188/1xE27','STAINLESS',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1c0370fa74e711e2a6393085a942bd8e'),
+ ('A01-0149/1xMR16-SN','ROUND SATIN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1da17339690f11e285d63085a942bd8e'),
+ ('B02-MX591/16','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1dbe4f61660611e2bd7d3085a942bd8e'),
+ ('B04-B0159B/1xE27-SR','SR HO',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1dc422c57bd311e29da73085a942bd8e'),
+ ('B02-MX704/4','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','11335.00','8500.00','0.00','1df3abb9660911e2bd7d3085a942bd8e'),
+ ('B02-MB516/1W','WHITE',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1edd6faf679711e28b7a3085a942bd8e'),
+ ('A01- 12v*20w-warm','WARM PEANUT BULB',1,'7217fd80620e11e2928c3085a942bd8e','',NULL,'','0','20000.00','5000.00','0.00','1f56798474c311e2a6393085a942bd8e'),
+ ('B04-B0104(S)/1 GY','MR16 bulb GY',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1f711a7474e611e2a6393085a942bd8e'),
+ ('A01- 3\" SQUARE-w','WHITE HOUSING',1,'57503562620f11e2928c3085a942bd8e','',NULL,'','62','1.00','1.00','565.00','1f85c2f174c211e2a6393085a942bd8e'),
+ ('A01-0401/1xMR16-WH','SQUARE WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','1fef94ea691011e285d63085a942bd8e'),
+ ('B02-MT9595/1','',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','6875.00','5500.00','0.00','204ee548679311e28b7a3085a942bd8e'),
+ ('B02-MD800/16B','BLACK',1,'7eed0afa678b11e28b7a3085a942bd8e','',NULL,'','0','51335.00','38500.00','0.00','20af42f5678c11e28b7a3085a942bd8e'),
+ ('B02-MD616/3','ROUND WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','12670.00','9500.00','0.00','20e2269263aa11e284a33085a942bd8e'),
+ ('B04-A001','LED EXIT SIGN (WORD ONLY)',1,'beff91da620f11e2928c3085a942bd8e','',NULL,'','0','1900.00','1450.00','0.00','22e25bac7b2611e28a0b3085a942bd8e'),
+ ('B02-MT8018/1B','BLACK',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','4670.00','3500.00','0.00','22fcf06c679111e28b7a3085a942bd8e'),
+ ('B04-C0234/1xE27','STAINLESS',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','234d19e074e711e2a6393085a942bd8e'),
+ ('B04-J0165/1-BK','BLACK HOUSING (100w-150w)',1,'621bebf3620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2387f6e47bcf11e29da73085a942bd8e'),
+ ('B02-MD561/2','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','6225.00','4980.00','0.00','23b32b9d639d11e284a33085a942bd8e'),
+ ('B02-MX603/8+1','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','15735.00','11800.00','0.00','23cfc81c660711e2bd7d3085a942bd8e'),
+ ('B28-3059S-SQ','Housing only',1,'57503562620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','244c4dfd7fc811e2885e3085a942bd8e'),
+ ('B02-MX896/13','PLATE WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','30000.00','22500.00','0.00','24f42fd6678011e28b7a3085a942bd8e'),
+ ('B02-MX924/4','',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','15335.00','11500.00','0.00','25d9c3b4678511e28b7a3085a942bd8e'),
+ ('B28-5001W','Housing only',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','25e1ce867fc911e2885e3085a942bd8e'),
+ ('B04-E0101L/1xgu10-BK','BLACK DIE CAST ALUMINUM HOUSING',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','640.00','480.00','0.00','26cc3eb97a7b11e2baaf3085a942bd8e'),
+ ('A01-5909/2xPLC-GY','SQAURE GREY DIE CAST ALUMINUM HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','27c25d53691c11e285d63085a942bd8e'),
+ ('A01-95200/1xGU10-V','ROUND VIOLET HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','28c316ad691811e285d63085a942bd8e'),
+ ('B02-MB592/1','2XE27',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','293a5398679811e28b7a3085a942bd8e'),
+ ('B04-N0111-12\"/1XE27','DOME-PLASTIC (HOUSING ONLY) PENDANT CHAIN',1,'96ce6f0a679911e28b7a3085a942bd8e','',NULL,'','456','1.00','1.00','56.00','296bfbab7bd811e29da73085a942bd8e'),
+ ('A01-901/1xMR16','ROUND WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2995147e691611e285d63085a942bd8e'),
+ ('B04-1008/1xE27-SR','E27 socket SR',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2a0604d574c711e2a6393085a942bd8e'),
+ ('B04-D0175-160/12Px1w','LED warm',1,'dee608e27a6d11e2baaf3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2a59f93d7a6e11e2baaf3085a942bd8e'),
+ ('B02-MX648/3','',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','9200.00','6900.00','0.00','2a6e40f3660811e2bd7d3085a942bd8e'),
+ ('B04-E0101L/1xmr16-BK','BLACK DIE CAST ALUMINUM (H.O)',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','640.00','480.00','0.00','2b6eb4fd7a7b11e2baaf3085a942bd8e'),
+ ('B04-C0157H35/1xE27','Stainless Housing',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2bafab157a7111e2baaf3085a942bd8e'),
+ ('B04-E0234/1x100w-SY','SY diecast aluminum housing',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2be923997a6211e2baaf3085a942bd8e'),
+ ('B04-H0106/1xE27 SR','SR steplight',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2bf3b62e7a6811e2baaf3085a942bd8e'),
+ ('B28-5001Y','Housing only',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2c11e4dd7fc911e2885e3085a942bd8e'),
+ ('B28-JR013-52/5-wood','ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2c38c69c7fbe11e2885e3085a942bd8e'),
+ ('B02-MD532/1','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','12670.00','9500.00','0.00','2cd4f479639c11e284a33085a942bd8e'),
+ ('B04-I01219B/1xE27-GD','(SOLUCCIONE ONLY)',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','9','1.00','1.00','445.00','2cf1036b7a6111e2baaf3085a942bd8e'),
+ ('B04-A0263H350/1 CF','E27 socket CF',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2d87f6b57a7011e2baaf3085a942bd8e'),
+ ('B02-MB523/1','',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2df0fda9679711e28b7a3085a942bd8e'),
+ ('A01- 12v*20w-white','WHITE PEANUT BULB',1,'7217fd80620e11e2928c3085a942bd8e','',NULL,'','14','1.00','1.00','60.00','2e6246b974c311e2a6393085a942bd8e'),
+ ('A01-95200/1xGU10-CL','ROUND CLEAR HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2ed4350c691711e285d63085a942bd8e'),
+ ('B04-H0106S/1xE27 SR','SR steplight',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2ede4f327a6811e2baaf3085a942bd8e'),
+ ('B02-A212/3','WHITE',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','6000.00','4800.00','0.00','2eeb400e639911e284a33085a942bd8e'),
+ ('A01-8760/2xE27-WH','6\'\' ROUND WHITE HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2f2d2611692f11e285d63085a942bd8e'),
+ ('A01-3543/1xE27-SN','3.5\'\' SQUARE SATIN HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2f7628be691211e285d63085a942bd8e'),
+ ('B28-3059L-SQ','Housing only',1,'57503562620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2f7886227fc811e2885e3085a942bd8e'),
+ ('B04-G0295-150/2 SB','SB E27  Housing',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2fd794ff7a7211e2baaf3085a942bd8e'),
+ ('A01-850307/2xPLC','8\'\' SQUARE WHITE HOUSING PUSH GLASS',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','2ff726d9692e11e285d63085a942bd8e'),
+ ('B28-JR098-52/5-sil','ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','302280787fc111e2885e3085a942bd8e'),
+ ('B02-B002/1','',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','2000.00','1600.00','0.00','303009af679611e28b7a3085a942bd8e'),
+ ('A01- 5\" SQUARE-w','WHITE HOUSING',1,'57503562620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','30dea50274c211e2a6393085a942bd8e'),
+ ('B28-5002','Housing only',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','31089d317fc911e2885e3085a942bd8e'),
+ ('B04-N0116-12\"/1XE27','DOME-PLASTIC (HOUSING ONLY) PENDANT CHAIN',1,'96ce6f0a679911e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','31cebaa57bd811e29da73085a942bd8e'),
+ ('B02-MD918/6A','RND BASE (CLEAR)',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','66','24000.00','18000.00','56.00','321f140c65f311e2bd7d3085a942bd8e'),
+ ('A01-863/1xMR11-WH','ROUND WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','321f2f13691411e285d63085a942bd8e'),
+ ('B02-MD800/16W','WHITE',1,'7eed0afa678b11e28b7a3085a942bd8e','',NULL,'','0','51335.00','38500.00','0.00','33be1b4e678c11e28b7a3085a942bd8e'),
+ ('B04-B0116WU/1 GY','E27 socket GY',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','343b583574e611e2a6393085a942bd8e'),
+ ('B04-D0175-180/12Px1w','LED warm',1,'dee608e27a6d11e2baaf3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3441bd3d7a6e11e2baaf3085a942bd8e'),
+ ('B02-ML8019/1','BLACK&WHITE',1,'fbd2c056620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','34a32346639311e284a33085a942bd8e'),
+ ('B02-MT8018/1R','RED',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','4670.00','3500.00','0.00','351b6f19679111e28b7a3085a942bd8e'),
+ ('B02-MD874/9','BALL WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','65','20670.00','15500.00','0.00','3524041d65eb11e2bd7d3085a942bd8e'),
+ ('B04-G0259/1xE27 SR','SR',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3559647d74d011e2a6393085a942bd8e'),
+ ('B02-9598/1B','BLACK',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','358701fd679311e28b7a3085a942bd8e'),
+ ('B04-I0327X/1xE27-RD','RD',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','35bb45e574ca11e2a6393085a942bd8e'),
+ ('B02-MD668/1S','SILVER',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','37ee2e6163b011e28cb53085a942bd8e'),
+ ('B02-MD591/3','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','7270.00','5450.00','0.00','37f6544063a211e284a33085a942bd8e'),
+ ('B02-MT9590/1W','ROUND WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2000.00','1600.00','0.00','381d783d679211e28b7a3085a942bd8e'),
+ ('MALING340','MALING ORIGINAL 340G',1,'3c7da3bb605111e2b9743085a942bd8e','CANS','Made up of blah blah','','0','85.00','75.00','0.00','3827c42b605311e2b9743085a942bd8e'),
+ ('B02-MD717/3XE27','WHITE ZIGZAG',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','9070.00','6800.00','0.00','383ae81b651c11e2abd53085a942bd8e'),
+ ('A01-1511/1xMR16','WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','38ab7401691011e285d63085a942bd8e'),
+ ('B02-MX885/3','E27 WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','10000.00','7500.00','0.00','38b0c7d0677f11e28b7a3085a942bd8e'),
+ ('B04-G0318-sqr/1 SR','E27 socket SQUARE ACRYLIC SML',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3919db3f74cc11e2a6393085a942bd8e'),
+ ('B02-MX704/9','WHITE & CLEAR GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','24670.00','18500.00','0.00','39305340660911e2bd7d3085a942bd8e'),
+ ('A01-88401/1xGU10-BL','SQUARE BLUE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','395a9e3d691511e285d63085a942bd8e'),
+ ('B28-5026A','Housing only',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3a1730457fc911e2885e3085a942bd8e'),
+ ('B02-MD639/8','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3a2c483963ad11e284a33085a942bd8e'),
+ ('B04-A0254-1/1xE27-SR','SR die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3b6fabb47a3b11e2baaf3085a942bd8e'),
+ ('B02-MX757/8','SILVER',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','18670.00','14000.00','0.00','3b975b5d660a11e2bd7d3085a942bd8e'),
+ ('B02-MX604/3','BULB WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3bf07fec660711e2bd7d3085a942bd8e'),
+ ('B02-MD800/1W','WHITE',1,'e3126637620f11e2928c3085a942bd8e','','SALE','','0','3000.00','3000.00','0.00','3c2db61565cd11e2bd7d3085a942bd8e'),
+ ('B04-A0263H600/1xE27-','CF ALUMINUM DIECAST HOUSING',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3ce5f1087bd411e29da73085a942bd8e'),
+ ('B02-0231/6','CONE CLEAR GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','36000.00','272000.00','0.00','3d358ef3639711e284a33085a942bd8e'),
+ ('A01-450602/1xMR16','SQUARE WHITE DIRECTIONAL HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3ddfa8be691311e285d63085a942bd8e'),
+ ('B04-G0430S/1xE27-SY','ACRYLIC COVER GREY DIE CAST ALUMINUM HOUSING',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','3040.00','2280.00','0.00','3e0f67b274c611e2a6393085a942bd8e'),
+ ('B28-5026B','Housing only',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3e72f1967fc911e2885e3085a942bd8e'),
+ ('B04-9134A/2xE27-SB','SB die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3e8ac2307a3d11e2baaf3085a942bd8e'),
+ ('B04-E0195/1x100w-BK','BLACK die cast aluminum',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3f315b377a7611e2baaf3085a942bd8e'),
+ ('B04-D 200/1xE27-CLR','CLR-globe',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3f6a2d8274f511e2a6393085a942bd8e'),
+ ('B04-H0111S/1xE27 SR','SR steplight',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3f9cf29d7a6a11e2baaf3085a942bd8e'),
+ ('A01-903/1xMR16','ROUND WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','3fa06c19691611e285d63085a942bd8e'),
+ ('B02-MX949/6+1','',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','12670.00','9500.00','0.00','3fca7a60678511e28b7a3085a942bd8e'),
+ ('B02-MD982/2B','BLACK',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8000.00','6000.00','0.00','40ecbfdf65f911e2bd7d3085a942bd8e'),
+ ('B04-H0202/1xG9-CF','CF diecast steplight',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','4127b13d7a4011e2baaf3085a942bd8e'),
+ ('A01-0149/1xMR16-WH','ROUND WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','417b77b4690f11e285d63085a942bd8e'),
+ ('B04-16\'\' DOME','ALUMINUM BEEHIVE',1,'96ce6f0a679911e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','42992fe07bd811e29da73085a942bd8e'),
+ ('A01-8760/2xPLC-WH','6\'\' ROUND WHITE HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','42a4d917692f11e285d63085a942bd8e'),
+ ('A01-998/1xE27-b','BLACK SPOTLIGHT',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','4369e06974c011e2a6393085a942bd8e'),
+ ('B02-MB531/1','E14',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','43cdaa3c679711e28b7a3085a942bd8e'),
+ ('B02-MD726/6','ROUND WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','12670.00','9500.00','0.00','4436241a651c11e2abd53085a942bd8e'),
+ ('B04-A0284/2xE27-SB','SB die cast up and down',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','459f76247a3a11e2baaf3085a942bd8e'),
+ ('A01-3543/1xE27-WH','3.5\'\' SQUARE WHITE HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','46275354691211e285d63085a942bd8e'),
+ ('B04-D0109/1 12v','PAR56/300w',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','46b014cc7a4311e2baaf3085a942bd8e'),
+ ('B28-JR069-48/3-sn','Metal blade- ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','46d38aeb7fbf11e2885e3085a942bd8e'),
+ ('B04-9135/2xE27-SB','SB die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','470d73c57a3d11e2baaf3085a942bd8e'),
+ ('B28-5010/L','Housing only',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','479c8e797fc211e2885e3085a942bd8e'),
+ ('B02-MX713/4','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','47c38175660911e2bd7d3085a942bd8e'),
+ ('B02-MD761/4','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','47e55d1165cb11e2bd7d3085a942bd8e'),
+ ('B04-T008/1G9-GY','GY',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','48013f9174ca11e2a6393085a942bd8e'),
+ ('B02-MT8024/1','',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','48a71bb9679111e28b7a3085a942bd8e'),
+ ('B02-MX907/6','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','15350.00','11500.00','0.00','4a030ca3678011e28b7a3085a942bd8e'),
+ ('B02-MT9598/1S','SILVER',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','4a035b5c679311e28b7a3085a942bd8e'),
+ ('B04-D 200/1xE27-WH','WH-globe',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','4a20b93974f511e2a6393085a942bd8e'),
+ ('B02-MD924/1B','BLACK',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8670.00','6500.00','0.00','4a3d977f65f311e2bd7d3085a942bd8e'),
+ ('A01-863/1xMR11','ROUND WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','4a82fba6691411e285d63085a942bd8e'),
+ ('','',0,'','',NULL,'','0','0.00','0.00','0.00','4b2d1e6e8d1611e28f845404a67007de'),
+ ('A01-88401/1xGU10-BR','SQUARE BROWN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','4c68738a691511e285d63085a942bd8e'),
+ ('B02-MD479/6','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','12670.00','9500.00','0.00','4c7fd301639b11e284a33085a942bd8e'),
+ ('B04-I01219A/1xE27-GD','GD SOLUCCIONE ONLY',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','4cc8564474c911e2a6393085a942bd8e'),
+ ('B02-B023/1','WHITE',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','1500.00','1200.00','0.00','4d0c15de679611e28b7a3085a942bd8e'),
+ ('B02-MT9590/1B','BLACK',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2000.00','1600.00','0.00','4d585b09679211e28b7a3085a942bd8e'),
+ ('B04-A7482/2xE27-SR','SR 2 SIDES die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','4e1fd0967a3c11e2baaf3085a942bd8e'),
+ ('B04-H0227B/1xE27-SB','BLACK DIE CAST ALUMINUM (H.O)',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1575.00','1180.00','0.00','4e3fc8d474c511e2a6393085a942bd8e'),
+ ('B04-I0101A/1xE27-BK','BLACK- SOLUCCIONE ONLY',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','4e68850074c811e2a6393085a942bd8e'),
+ ('B04-G0344/1xE27-SY','SY',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','4e6e928c74ce11e2a6393085a942bd8e'),
+ ('B02-MX648/5+1','',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','12670.00','9500.00','0.00','501a5aac660811e2bd7d3085a942bd8e'),
+ ('A01-8617/2xE27','8\'\' ROUND WHITE HOUSING PUSH GLASS',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','513a6b7b692e11e285d63085a942bd8e'),
+ ('B04-E0105S/1xE27-BK','BLACK DIE CAST ALUMINUM (H.O)',1,'847af19c7a7511e2baaf3085a942bd8e','',NULL,'','0','640.00','480.00','0.00','5162b3ef7a7b11e2baaf3085a942bd8e'),
+ ('B02-A343/1','',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','4250.00','3400.00','0.00','51b6e508639a11e284a33085a942bd8e'),
+ ('B02-MX885/3+3+1','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','23335.00','17500.00','0.00','5227aa8d677f11e28b7a3085a942bd8e'),
+ ('B04-PZE-19/1xE27-GY','GY DIECAST ALUMINUM HOUSING',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','52d259347bd611e29da73085a942bd8e'),
+ ('B02-MD669/3','',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','52e08af763b011e28cb53085a942bd8e'),
+ ('B04-H0250B-LED-WARM','LED steplight',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','530041fc7a6a11e2baaf3085a942bd8e'),
+ ('B02-MX850/4','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','10000.00','7500.00','0.00','532ecde4660b11e2bd7d3085a942bd8e'),
+ ('B28-F041-48-WHT','ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','539b0a977fbd11e2885e3085a942bd8e'),
+ ('B04-F0122/1xE27 ST','STAINLESS housing',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','5409377b7a6d11e2baaf3085a942bd8e'),
+ ('B02-MD834/4xE27','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','541dd36765ea11e2bd7d3085a942bd8e'),
+ ('A01-650306/2xE27','ROUND WHITE HOUSING W/ GLASS COVER',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','549a5670692c11e285d63085a942bd8e'),
+ ('A01-9252/1xPEANUT-SN','ROUND SATIN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','54fd9404691611e285d63085a942bd8e'),
+ ('B02-MD875/6','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8670.00','6500.00','0.00','55379fb365eb11e2bd7d3085a942bd8e'),
+ ('B02-ML244/24MB','BLACK',1,'fbd2c056620f11e2928c3085a942bd8e','',NULL,'','0','1.00','100.00','0.00','554b67cd639411e284a33085a942bd8e'),
+ ('B02-MT8027/1','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','559c41c0679111e28b7a3085a942bd8e'),
+ ('B02-MD563/1 (S)','SMALL WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','55cbb277639d11e284a33085a942bd8e'),
+ ('B04-H0155/1xE27-SR','SR diecast steplight',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','56051d5c7a3f11e2baaf3085a942bd8e'),
+ ('B02-MT801/1W','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','5335.00','4000.00','0.00','56bc7ae9678c11e28b7a3085a942bd8e'),
+ ('B02-MD602/3A','ROUND',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','6100.00','4880.00','0.00','56df910263a311e284a33085a942bd8e'),
+ ('B02-MD641/1B','ACRYLIC BLACK',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','56f5899863ad11e284a33085a942bd8e'),
+ ('A01-2001-30CM/1xMR16','SILVER HOUSING W/ STEM',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','575a1970691111e285d63085a942bd8e'),
+ ('B04-I0130B/1xE27-GD','(SOLUCCIONE ONLY)',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','57cff9497a6111e2baaf3085a942bd8e'),
+ ('B04-B0161/1XE27-SY','SY diecast aluminum',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','582ee85e7a7011e2baaf3085a942bd8e'),
+ ('B02-ML220/3','W/ LIGHT',1,'3de94e1a679811e28b7a3085a942bd8e','',NULL,'','0','16000.00','12000.00','0.00','59c1b91b679811e28b7a3085a942bd8e'),
+ ('B02-MB532/2','E14 BLACK & WHITE',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','5a7b39e5679711e28b7a3085a942bd8e'),
+ ('B04-E0279/2XE27','GREY DIE CAST ALUMINUM HOUSING',1,'621bebf3620e11e2928c3085a942bd8e','','SALE ITEM','','0','0.00','1880.00','0.00','5aafbd707b2711e28a0b3085a942bd8e'),
+ ('B02-MD596/1','BLACK',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','4140.00','3312.00','0.00','5b2cb03463a211e284a33085a942bd8e'),
+ ('B04-G0266/1xE27-SR','SR big D:21.5cm H: 8.5cm',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','5b73821774e411e2a6393085a942bd8e'),
+ ('B02-MD567/1','LONG WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','6020.00','4816.00','0.00','5ba5b237639f11e284a33085a942bd8e'),
+ ('A01-1512/2xMR16','WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','5bb22d1f691011e285d63085a942bd8e'),
+ ('B02-MX600/5','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','8500.00','6800.00','0.00','5c967c23660611e2bd7d3085a942bd8e'),
+ ('B02-MX604/4','BULB WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','5d34c4bf660711e2bd7d3085a942bd8e'),
+ ('B02-MX885/9','SQR BASE (WHITE)',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','30000.00','22500.00','0.00','5d692744677f11e28b7a3085a942bd8e'),
+ ('A01-JB8823/3 Gu10','SPOTLIGHT-ALUMINUM',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','5e3ddf2b74c111e2a6393085a942bd8e'),
+ ('B04-E0106S/1xE27-BK','BLACK HOUSING ONLY',1,'847af19c7a7511e2baaf3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','5e59c8d87a7b11e2baaf3085a942bd8e'),
+ ('B04-H0112/1xE27-SR','SR steplight',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','5e7a23af7a6a11e2baaf3085a942bd8e'),
+ ('B04-A7482/2xE27-SY','SY 2 SIDES die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','5e7a72097a3c11e2baaf3085a942bd8e'),
+ ('B02-MT9591/1B','BLACK',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2250.00','1800.00','0.00','5e8cf8ca679211e28b7a3085a942bd8e'),
+ ('B04-FL50W-LED*warm','LED warm floodlight',1,'621bebf3620e11e2928c3085a942bd8e','',NULL,'','0','6510.00','4880.00','0.00','5f0789507a7a11e2baaf3085a942bd8e'),
+ ('B02-MX719/3','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','9350.00','7000.00','0.00','5f23d171660911e2bd7d3085a942bd8e'),
+ ('A01-JB0271/1xGU10','ROUND ALUMINUM MULTI-DIRECTIONAL HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','5f884341691811e285d63085a942bd8e'),
+ ('B02-MX763/3','STAR WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','6000.00','4500.00','0.00','5f92b73c660a11e2bd7d3085a942bd8e'),
+ ('B28-JR035-48/4','Dark brown- ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','5fc17f8a7fbe11e2885e3085a942bd8e'),
+ ('B02-MD537/1','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','2531.50','2025.00','0.00','5ffeeb5e639c11e284a33085a942bd8e'),
+ ('B02-MD761/3','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','60393d2d651d11e2abd53085a942bd8e'),
+ ('B02-MD832/4xE27','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','10000.00','7500.00','0.00','6082070665ea11e2bd7d3085a942bd8e'),
+ ('B04-G0432L/1 SY','ACRYLIC COVER GREY DIE CAST ALUMINUM HOUSING',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','3310.00','2480.00','0.00','60a68df474c611e2a6393085a942bd8e'),
+ ('A01-88401/1xGU10-CL','SQUARE CLEAR HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','613f0822691511e285d63085a942bd8e'),
+ ('B02-MX552/3+1','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','8670.00','6500.00','0.00','61fa627a660511e2bd7d3085a942bd8e'),
+ ('B28-5015M/2xE27','Circle design',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','629cf7e37fc211e2885e3085a942bd8e'),
+ ('B02-ML8020/1','BLACK&WHITE',1,'fbd2c056620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','635ded38639311e284a33085a942bd8e'),
+ ('B04-DOME-12\'\'-E27','SANDBLASTED (H.O)',1,'96ce6f0a679911e28b7a3085a942bd8e','12\'\'',NULL,'','0','430.00','320.00','0.00','6368b7b37b2611e28a0b3085a942bd8e'),
+ ('B02-MT8508/1B','BLACK',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','63ab2802679111e28b7a3085a942bd8e'),
+ ('B02-MD924/1CH','CHROME',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8670.00','6500.00','0.00','63df887c65f311e2bd7d3085a942bd8e'),
+ ('B04-A0132/2xE27','SR die cast square up and down',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','6400e1bc74e711e2a6393085a942bd8e'),
+ ('B02-MX850/9','ROUND WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','21335.00','16000.00','0.00','64c63cb4677e11e28b7a3085a942bd8e'),
+ ('B04-I0130A/1xE27-GD','GD SOLUCCIONE ONLY',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','655007f174c911e2a6393085a942bd8e'),
+ ('B04-C0192H35/1xE27','Stainless Housing',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','6556c8867a7111e2baaf3085a942bd8e'),
+ ('B04-A0107A/2-E27 BK','BK (par30)  die cast aluminum housing up and down',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','655dcf727a3e11e2baaf3085a942bd8e'),
+ ('B04-G0265/1xE27-SV','SV',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','655f826f74d011e2a6393085a942bd8e'),
+ ('B02-MB3038/2','',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','6000.00','4500.00','0.00','65f762e0679611e28b7a3085a942bd8e'),
+ ('B02-MD982/2S','SILVER',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8000.00','6000.00','0.00','684c80dc65f911e2bd7d3085a942bd8e'),
+ ('A01-998/1xE27-w','WHITE SPOTLIGHT',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','68c852c374c011e2a6393085a942bd8e'),
+ ('B02-ARCH#1','WHITE BASE',1,'fbd2c056620f11e2928c3085a942bd8e','',NULL,'','134','18000.00','13500.00','45.01','691aba83637c11e284a33085a942bd8e'),
+ ('A01-8617/2xPLC','8\'\' ROUND WHITE HOUSING PUSH GLASS',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','695672ca692e11e285d63085a942bd8e'),
+ ('B04-I0101B/1xE27-BK','(SOLUCCIONE ONLY)',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','6a5e468a7a6011e2baaf3085a942bd8e'),
+ ('A01-4043/1xE27-SN','4\'\' SQUARE SATIN HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','6a809f4a691211e285d63085a942bd8e'),
+ ('B04-G0332/1xE27-SY','SY ROUND',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','6bdaf8ec74cd11e2a6393085a942bd8e'),
+ ('B04-E0117/1xE27-BK','BLACK plastic (H.O)',1,'847af19c7a7511e2baaf3085a942bd8e','',NULL,'','0','240.00','180.00','0.00','6c8bdee77a7b11e2baaf3085a942bd8e'),
+ ('B02-MD597/4B','BLACK GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','7250.00','5800.00','0.00','6cf2b26a63a211e284a33085a942bd8e'),
+ ('B02-MT9607/1','CHROME',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','3735.00','2800.00','0.00','6d262f32679311e28b7a3085a942bd8e'),
+ ('A01-1513/2xMR16','WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','6d37ec8e691011e285d63085a942bd8e'),
+ ('A01-450602/2xMR16','RECT. WHITE DIRECTIONAL HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','6d8e2fa8691311e285d63085a942bd8e'),
+ ('B04-H0279B/1xE27-SY','GREY DIE CAST ALUMINUM (H.O)',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1710.00','1280.00','0.00','6e18f23074c511e2a6393085a942bd8e'),
+ ('B02-MD816/1','WHITE & BLACK',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','3335.00','2500.00','0.00','6e60234565cd11e2bd7d3085a942bd8e'),
+ ('B28-5006L','Housing only',1,'7eed0afa678b11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','6ede7aa97fc411e2885e3085a942bd8e'),
+ ('B02-MX604/6+1','BULB WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','6edebfbc660711e2bd7d3085a942bd8e'),
+ ('B02-MT801/1B','BLACK',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','5335.00','4000.00','0.00','6f001648678c11e28b7a3085a942bd8e'),
+ ('B04-C0233H32/1xE27','Stainless Housing',1,'fc67cdee620e11e2928c3085a942bd8e','32CM',NULL,'','0','2480.00','1860.00','0.00','6f66eec97a7111e2baaf3085a942bd8e'),
+ ('B04-G0368/4Px1w-LED','LED WARM SQUARE',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7149221174ce11e2a6393085a942bd8e'),
+ ('B02-MD679/1','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','6400.00','4800.00','0.00','7152b4de651b11e2abd53085a942bd8e'),
+ ('B04-A0107A/2-E27 ST','ST (par30)  die cast aluminum housing up and down',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7172f1327a3e11e2baaf3085a942bd8e'),
+ ('B04-E0118/1xE27-BK','BLACK HOUSING ONLY',1,'847af19c7a7511e2baaf3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','71ae83517a7b11e2baaf3085a942bd8e'),
+ ('B02-MT8508/1W','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7330600b679111e28b7a3085a942bd8e'),
+ ('A01-0035/1xMR16','ROUND WHITE DIRECTIONAL HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','73f4faf6679a11e28b7a3085a942bd8e'),
+ ('B02-MD764/1','WHITE',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','4670.00','3500.00','0.00','7416465665cb11e2bd7d3085a942bd8e'),
+ ('B04-E0197A1/1 BK','BLACK Gu10 die cast aluminum',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','1.00','1.00','0.00','74811ae57a7611e2baaf3085a942bd8e'),
+ ('B04-I0311B/1xE27-SB','(SOLUCCIONE ONLY)',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','74b9671c7a6111e2baaf3085a942bd8e'),
+ ('A01-650306/2xPLC','ROUND WHITE HOUSING W/ GLASS COVER',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','74c5c99d692c11e285d63085a942bd8e'),
+ ('B02-MX908/4+1','E27',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','11335.00','8500.00','0.00','75c729c2678311e28b7a3085a942bd8e'),
+ ('A01-2045-5CM/1xMR16','SILVER HOUSING W/ STEM',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7649236d691111e285d63085a942bd8e'),
+ ('A01-88401/1xGU10-G','SQUARE GOLD HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','768d807a691511e285d63085a942bd8e'),
+ ('B02-MD563/1 (B)','BIG WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','774fb297639d11e284a33085a942bd8e'),
+ ('B02-MB433/1','',1,'57503562620f11e2928c3085a942bd8e','',NULL,'','0','1625.00','1300.00','0.00','7760ec50679711e28b7a3085a942bd8e'),
+ ('B28-5028','Housing only',1,'7eed0afa678b11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','77861a717fc411e2885e3085a942bd8e'),
+ ('A01-E0294+PIN/1 SY','BLACK DIE CAST ALUMINUM (H.O)',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','2110.00','1580.00','0.00','778dc1ac74c411e2a6393085a942bd8e'),
+ ('B02-0231/8','CONE CLEAR GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7792a5ad639711e284a33085a942bd8e'),
+ ('B04-A0102/1xE27-SR','SR die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','779cc1db7a3d11e2baaf3085a942bd8e'),
+ ('B02-MT9643/1CH','CHROME W/ WHITE BASE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','5070.00','3800.00','0.00','78510e9b679511e28b7a3085a942bd8e'),
+ ('A01-6042/2xE27','ROUND WHITE HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','786b118f692311e285d63085a942bd8e'),
+ ('B04-FL20W-LED*warm','FLOODLIGHT (SET)',1,'336793337b2711e28a0b3085a942bd8e','',NULL,'','0','3735.00','2800.00','0.00','78facfb17bd211e29da73085a942bd8e'),
+ ('A01-9252/1xPEANUT-WH','ROUND WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7915eb24691611e285d63085a942bd8e'),
+ ('B02-MD896/8','PLATE WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','18670.00','1.00','0.00','795e0b6265eb11e2bd7d3085a942bd8e'),
+ ('B02-MD924/1R','RED',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8670.00','6500.00','0.00','7960cfcf65f311e2bd7d3085a942bd8e'),
+ ('B02-MX600/6+1','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','12000.00','9600.00','0.00','7970fc4f660611e2bd7d3085a942bd8e'),
+ ('B04-E0118A/1xE27-BK','BLACK HOUSING ONLY',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7a70dc747a7b11e2baaf3085a942bd8e'),
+ ('B02-MD982/2W','WHITE',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8000.00','6000.00','0.00','7a79510565f911e2bd7d3085a942bd8e'),
+ ('B28-JR073-52/4-clr','Plastic blade-ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7b207af57fc011e2885e3085a942bd8e'),
+ ('B02-MX557/3','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','7335.00','5800.00','0.00','7ba613ab660511e2bd7d3085a942bd8e'),
+ ('B02-MX763/5+1','STAR WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','11335.00','8500.00','0.00','7c43372c660a11e2bd7d3085a942bd8e'),
+ ('B04-G0432S/1 SY','ACRYLIC COVER GREY DIE CAST ALUMINUM HOUSING',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','3040.00','2280.00','0.00','7c669bf674c611e2a6393085a942bd8e'),
+ ('B02-ARCH #2','BLACK BASE',1,'fbd2c056620f11e2928c3085a942bd8e','',NULL,'','665','18000.00','13500.00','5656.00','7cf6cd34637e11e284a33085a942bd8e'),
+ ('B02-MX719/6+1','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','13335.00','10000.00','0.00','7d52e82d660911e2bd7d3085a942bd8e'),
+ ('B02-MT9609/1','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7da655f0679311e28b7a3085a942bd8e'),
+ ('B04-A0263/1xE27-CF','CF die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7ed8017a7a3b11e2baaf3085a942bd8e'),
+ ('B04-E0122/1xE27-BK','BLACK HOUSING ONLY',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7f8b352f7a7b11e2baaf3085a942bd8e'),
+ ('B04-A002-1','EXIT SIGN (ARROW LEFT)',1,'beff91da620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','7fa258f87bcb11e29da73085a942bd8e'),
+ ('B02-MT9591/1C','CLEAR',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2250.00','1800.00','0.00','802b09cc679211e28b7a3085a942bd8e'),
+ ('MX873/9','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','22670.00','17000.00','0.00','8141f5c9677e11e28b7a3085a942bd8e'),
+ ('B02-MB3065/1','CUBE',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','5200.00','3900.00','0.00','816d1b4b679611e28b7a3085a942bd8e'),
+ ('B02-MD641/1R','ACRYLIC RED',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','81e724bf63ad11e284a33085a942bd8e'),
+ ('B28-6043A','Housing only',1,'7eed0afa678b11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','832971f47fc411e2885e3085a942bd8e'),
+ ('B04-G0104S/1xE27-BK','BLACK (Plastic)',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','839d0a0174f511e2a6393085a942bd8e'),
+ ('A01-4043/1xE27-WH','4\'\' SQUARE WHITE HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','83ef0711691211e285d63085a942bd8e'),
+ ('B04-G0356B/1xE27-SB','SB',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','840e60b674ce11e2a6393085a942bd8e'),
+ ('A01-JB0281/1xGU10','SQUARE ALUMINUM MULTI-DIRECTIONAL HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','84f3a194691811e285d63085a942bd8e'),
+ ('B02-A299/1','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','4750.00','3800.00','0.00','852cdb43639911e284a33085a942bd8e'),
+ ('B04-F0168-105/1 ST','Gu10 STAINLESS housing',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','854b98377a6a11e2baaf3085a942bd8e'),
+ ('B04-E0264/1xE27-GY','GY die cast aluminum',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','1.00','1.00','0.00','85f7f07f7a7611e2baaf3085a942bd8e'),
+ ('B02-ML8018/1','BLACK',1,'fbd2c056620f11e2928c3085a942bd8e','',NULL,'','0','8750.00','6550.00','0.00','85fa4c5d639111e284a33085a942bd8e'),
+ ('A01-5909/2xPLC-WH','SQUARE WHITE DIE CAST ALUMINUM HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','8753f6a6691c11e285d63085a942bd8e'),
+ ('B28-6043B','Housing only',1,'7eed0afa678b11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','87c1cf9f7fc411e2885e3085a942bd8e'),
+ ('B02-MT8062/1','BLACK & WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','87eaecee679111e28b7a3085a942bd8e'),
+ ('B04-G0260-SV','SV',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','8819918174e411e2a6393085a942bd8e'),
+ ('B02-MX612/6+1','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','15735.00','11800.00','0.00','887ea90e660711e2bd7d3085a942bd8e'),
+ ('B04-H0281B/1xE27-SY','GREY DIE CAST ALUMINUM (H.O)',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1710.00','1280.00','0.00','888a78df74c511e2a6393085a942bd8e'),
+ ('B28-F063-52-AB','ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','5','1.00','1.00','665.00','88da3e147fbd11e2885e3085a942bd8e'),
+ ('B02-MX479/6','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','12670.00','9500.00','0.00','89205b5165fa11e2bd7d3085a942bd8e'),
+ ('B04-E0126/1xMR16-BK','BLACK HOUSING ONLY',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','1.00','1.00','0.00','89a663f77a7b11e2baaf3085a942bd8e'),
+ ('B02-MD604/3','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','8a02c4dd63a411e284a33085a942bd8e'),
+ ('B28-C4003/3xE27 WHT','WHT color',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','8a5d0cd97fc311e2885e3085a942bd8e'),
+ ('B02-ML242-08LS','BLACK',1,'fbd2c056620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','8a8b542d639311e284a33085a942bd8e'),
+ ('B04-D0173/3Px1w-LED','WARM LIGHT spotlight base/spike',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','8b69b6dc7a4411e2baaf3085a942bd8e'),
+ ('B04-E0133B/1xE27','DIE CAST ALUMINUM HOUSING',1,'847af19c7a7511e2baaf3085a942bd8e','',NULL,'','0','960.00','720.00','0.00','8b7c13317ef111e28c1d3085a942bd8e'),
+ ('A01-88401/xGU10-R','SQUARE RAINBOW HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','8c92297c691511e285d63085a942bd8e'),
+ ('B02-MD479/3A','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','6100.00','4880.00','0.00','8cdaabb7639b11e284a33085a942bd8e'),
+ ('A01-450602/3xMR16','RECT. WHITE DIRECTIONAL HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','8d875a50691311e285d63085a942bd8e'),
+ ('B02-MD924/1S','SILVER',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8670.00','6500.00','0.00','8e82850065f311e2bd7d3085a942bd8e'),
+ ('B02-MD983/1B','BLACK',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','7335.00','5800.00','0.00','8eb3137565f911e2bd7d3085a942bd8e'),
+ ('B04-G0127S/1xE27-BK','BLACK (Plastic)',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','8ee66b8c74f511e2a6393085a942bd8e'),
+ ('B02-MD569/1','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','5700.00','4560.00','0.00','8f6e8438639f11e284a33085a942bd8e'),
+ ('A01-FLD 300W','WITH SENSOR',1,'621bebf3620e11e2928c3085a942bd8e','',NULL,'','45','1.00','1.00','45.00','908f511374c211e2a6393085a942bd8e'),
+ ('B02-9591/1R','RED',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2250.00','1800.00','0.00','90a0e0b8679211e28b7a3085a942bd8e'),
+ ('B28-JR065-48/3-brn','ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','910d640d7fbe11e2885e3085a942bd8e'),
+ ('B02-MT9611/1','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9175f4ab679311e28b7a3085a942bd8e'),
+ ('A01-6042/2xPLC','ROUND WHITE HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','91cf2643692311e285d63085a942bd8e'),
+ ('B04-A186L/LED','LED step light/inground',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','91d9a2e77a6711e2baaf3085a942bd8e'),
+ ('B02-MD897/8','ROUND WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','14670.00','11000.00','0.00','91fb093165f211e2bd7d3085a942bd8e'),
+ ('A01-2045-30CM/1xMR16','SILVER HOUSING W/ STEM',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9288250f691111e285d63085a942bd8e'),
+ ('B02-MX602/3','ROUND WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','9870.00','7400.00','0.00','93249f9e660611e2bd7d3085a942bd8e'),
+ ('B02-MD726/8','ROUND WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','16000.00','12000.00','0.00','9372c7e9651c11e2abd53085a942bd8e'),
+ ('B02-MB507S/1','SMALL SWIRL PATTERN',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','93b1f09e679711e28b7a3085a942bd8e'),
+ ('B02-MD406B/8','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','50680.00','38500.00','0.00','94085b8f639a11e284a33085a942bd8e'),
+ ('B02-MT9643/1SL','SILVER W/ SILVER BASE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','5070.00','3800.00','0.00','94147496679511e28b7a3085a942bd8e'),
+ ('B04-A0128/2xE27 SB','SB (par20)  die cast aluminum housing up and down',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','94271c4a7a3e11e2baaf3085a942bd8e'),
+ ('A01- 3\" ROUND-w','WHITE HOUSING',1,'57503562620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','94371e4c74c111e2a6393085a942bd8e'),
+ ('B04-DOME-12\'\'-E27 S','SHINNY REFLECTOR',1,'96ce6f0a679911e28b7a3085a942bd8e','12\'\'',NULL,'','0','430.00','320.00','0.00','94a7cd577b2611e28a0b3085a942bd8e'),
+ ('B04-H0202/1xG9-SY','SY diecast steplight',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','94ea261c7a3f11e2baaf3085a942bd8e'),
+ ('B04-FL30W-LED*warm','LED warm floodlight',1,'621bebf3620e11e2928c3085a942bd8e','',NULL,'','0','4670.00','3500.00','0.00','9520d6417a7911e2baaf3085a942bd8e'),
+ ('B28-JR092-42/3','Multi color ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','95cf26f97fc011e2885e3085a942bd8e'),
+ ('B04-A0168(B)/1xE27','GY PAR 38',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9602e4037a3a11e2baaf3085a942bd8e'),
+ ('B04-B0111/1XE27-SB','GREY DIE CAST ALUMINUM (H.O)',1,'fc67cdee620e11e2928c3085a942bd8e','','SALE ITEM','','0','1.00','3000.00','0.00','96454a6f7a7011e2baaf3085a942bd8e'),
+ ('A01-8740/1xE27-SN','4\'\' ROUND SATIN HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','96b87092692e11e285d63085a942bd8e'),
+ ('B04-G0275/1xE27-SR','SR',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','96c2669074e411e2a6393085a942bd8e'),
+ ('B02-MX578/4','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','12000.00','9000.00','0.00','96e64ea8660511e2bd7d3085a942bd8e'),
+ ('A01-650404/2xE27','6\'\' SQUARE WHITE HOUSING PUSH GLASS',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','97643466692d11e285d63085a942bd8e'),
+ ('B02-MB429/1','WHITE',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','556','1875.00','1300.00','10.01','97828f18679611e28b7a3085a942bd8e'),
+ ('A01-0282/1xGU10','ALUMINUM HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9804967e690f11e285d63085a942bd8e'),
+ ('B02-MX893/12+1','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','26670.00','20000.00','0.00','985f3dd6677f11e28b7a3085a942bd8e'),
+ ('B04-B0115/1xE27-SR','SR DIECAST ALUMINUM HOUSING',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','988666f17bd511e29da73085a942bd8e'),
+ ('B04-G0356B/1xE27 SB','SB Housing',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','99285c607a7111e2baaf3085a942bd8e'),
+ ('B02-MX763/6+1','STAR WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','13335.00','10000.00','0.00','998f3863660a11e2bd7d3085a942bd8e'),
+ ('B02-MX719/10+4','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','26000.00','19500.00','0.00','99bdfb2e660911e2bd7d3085a942bd8e'),
+ ('B02-MD968/1S','WHITE & SILVER',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','3735.00','2800.00','0.00','9ab61af665f411e2bd7d3085a942bd8e'),
+ ('B04-2016/2xPLC-BK','BLACK FLOODLIGHT',1,'336793337b2711e28a0b3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9b27187d7bce11e29da73085a942bd8e'),
+ ('B02-MX873/12','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','29350.00','22000.00','0.00','9b55edb8677e11e28b7a3085a942bd8e'),
+ ('B02-MD677/1','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','6400.00','4800.00','0.00','9bf961ed63b011e28cb53085a942bd8e'),
+ ('B02-MT8063/1','WHITE & YELLOW',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9c34bcf9679111e28b7a3085a942bd8e'),
+ ('B04-D0106/1xMR16-ST','STAINLESS SPOTLIGHT',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9c8214a67a4511e2baaf3085a942bd8e'),
+ ('B04-G0256-dia/1 SB','E27 socket diamond',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9c87db3a74cf11e2a6393085a942bd8e'),
+ ('B04-F0116/1xE27','STAINLESS HOUSING',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','2160.00','1620.00','0.00','9d8591fa7d7911e2915e3085a942bd8e'),
+ ('B02-MD816/3','WHITE & BLACK',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8670.00','1.00','0.00','9d85ee4765e911e2bd7d3085a942bd8e'),
+ ('B04-G0333/1xE27-SY','SY  SQUARE',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9d8c9b7b74cd11e2a6393085a942bd8e'),
+ ('B02-MD537/3','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','6225.00','4980.00','0.00','9e71047f639c11e284a33085a942bd8e'),
+ ('B04-F0114/1','BLACKDIE CAST ALUMINUM (H.O)',1,'9efbd113620f11e2928c3085a942bd8e','','SALE','','0','1.00','850.00','0.00','9e8e56377a7511e2baaf3085a942bd8e'),
+ ('A01-JB8821/1 Gu10','SPOTLIGHT-ALUMINUM',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9e933fb574c011e2a6393085a942bd8e'),
+ ('MD597/4R','RED GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','7250.00','5800.00','0.00','9ed3b2ce63a211e284a33085a942bd8e'),
+ ('B04-G0277/1xE27-SR','SR',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9f5b668e74e411e2a6393085a942bd8e'),
+ ('B04-A0264/1xE27-SY','SY die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','9fa21ef27a3b11e2baaf3085a942bd8e'),
+ ('B04-I0104C/1xE27-BK','BLACK HOUSING',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a005225e7a6f11e2baaf3085a942bd8e'),
+ ('B04-14\" DOME TYPE','ALUMINUM BEEHIVE',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a1e9364f7bd811e29da73085a942bd8e'),
+ ('A01- 4\" ROUND-w','WHITE HOUSING',1,'57503562620f11e2928c3085a942bd8e','',NULL,'','5','1.00','1.00','5.00','a1f9dda474c111e2a6393085a942bd8e'),
+ ('B04-G0298/1xE27 SB','SB HOUSING',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a297e06774ca11e2a6393085a942bd8e'),
+ ('A01-JB0282/2xGU10','RECT. ALUMINUM MULTI-DIRECTIONAL HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a31b04a6691811e285d63085a942bd8e'),
+ ('B02-ML221/1','W/ LIGHT',1,'3de94e1a679811e28b7a3085a942bd8e','',NULL,'','0','13335.00','10000.00','0.00','a3af53ef679811e28b7a3085a942bd8e'),
+ ('B02-MX625/1B','BLACK',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','6335.00','4750.00','0.00','a44a0442660711e2bd7d3085a942bd8e'),
+ ('A01-650406/2xE27','6\'\' ROUND WHITE HOUSING PUSH GLASS',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a4701c0f692c11e285d63085a942bd8e'),
+ ('B28-C4004/3xE27 WHT','CIRCLE WHT design color',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a473136a7fc311e2885e3085a942bd8e'),
+ ('B04-B0116/1xE27-GY','GY DIECAST ALUMINUM HOUSING',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a4af2f277bd511e29da73085a942bd8e'),
+ ('B02-MT9615/1','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','4670.00','3500.00','0.00','a4cbb4b3679311e28b7a3085a942bd8e'),
+ ('B04-G0217/1xE27-SR','SR HOUSING',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a4d5f05674f511e2a6393085a942bd8e'),
+ ('B02-MD983/1S','SILVER',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','7335.00','5800.00','0.00','a5327e8a65f911e2bd7d3085a942bd8e'),
+ ('B02-MD934/6','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','11735.00','8800.00','0.00','a5ec483e65f311e2bd7d3085a942bd8e'),
+ ('A01-0041/1','SET W/ 12V PEANUT BULB ROUND SATIN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','9','1.00','1.00','12.00','a6f86d11679a11e28b7a3085a942bd8e'),
+ ('B04-A0157/1xE27-SB','SB die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a819c82e74ec11e2a6393085a942bd8e'),
+ ('B02-MB507B/1','BIG SWIRL PATTERN',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a8291263679711e28b7a3085a942bd8e'),
+ ('A01-8740/1xPLC-SN','4\'\' ROUND WHITE HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a836aeb7692e11e285d63085a942bd8e'),
+ ('A01-760/1xMR16','ROUND SATIN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a85b39c6691311e285d63085a942bd8e'),
+ ('B04-82016/1XE27','DOME-PRISMATIC HOUSING ONLY PLASTIC BASE',1,'96ce6f0a679911e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a985c9d27bd611e29da73085a942bd8e'),
+ ('B04-A0128/2xE27 SR','SR (par20)  die cast aluminum housing up and down',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','a98d5b9d7a3e11e2baaf3085a942bd8e'),
+ ('B02-MT9591/1V','VIOLET',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2250.00','1800.00','0.00','aa20b1fd679211e28b7a3085a942bd8e'),
+ ('B02-MX602/4','ROUND WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','11335.00','8500.00','0.00','aa29d915660611e2bd7d3085a942bd8e'),
+ ('B04-FL10w-LED*warm','FLOODLIGHT/ GARDEN SPIKE LIGHT (SET)',1,'336793337b2711e28a0b3085a942bd8e','',NULL,'','0','2000.00','1500.00','0.00','aaccb40a7bd211e29da73085a942bd8e'),
+ ('B02-MT9351/1','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ab05ecbb679111e28b7a3085a942bd8e'),
+ ('B28-F035-48-ZJH','ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ac816d0c7fbd11e2885e3085a942bd8e'),
+ ('B04-G0219/1xE27-SR','SR HOUSING',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','acbe942374f511e2a6393085a942bd8e'),
+ ('B04-H0202/1xG9-GY','GY diecast steplight',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ad0c8cd47a3f11e2baaf3085a942bd8e');
+INSERT INTO `item` (`code`,`descriptor`,`type`,`categoryid`,`umeasure`,`longdesc`,`picfile`,`onhand`,`unitprice`,`floorprice`,`unitcost`,`id`) VALUES 
+ ('A01-9262/1xPEANUT-SN','SET W/ BULB 12v ROUND SATIN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ad35a770691611e285d63085a942bd8e'),
+ ('B02-MD737/1','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','3350.00','2500.00','0.00','ad5784b4651c11e2abd53085a942bd8e'),
+ ('B04- A002-2','EXIT SIGN (ARROW RIGHT)',1,'beff91da620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ad6391137bc911e29da73085a942bd8e'),
+ ('B04-402-TRI/1-SB','SB die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','adc337be7a3c11e2baaf3085a942bd8e'),
+ ('B28-3060S-RD','Housing only',1,'57503562620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ae93d12f7fc811e2885e3085a942bd8e'),
+ ('B04-I0322B/1xE27-BK','(SOLUCCIONE ONLY)',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','aeb7f29e7a6111e2baaf3085a942bd8e'),
+ ('B02-MD646/3','ROUND GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','af01cf4463ad11e284a33085a942bd8e'),
+ ('B28-JR066-52-WHT','ceiling fan w/ light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b010c7ed7fbe11e2885e3085a942bd8e'),
+ ('B04-G0334/1xE27-SY','GREY DIE CAST ALUMINUM HOUSING',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','2935.00','2200.00','0.00','b054d10e74cd11e2a6393085a942bd8e'),
+ ('A01-88803/1xGU10-BK','OCTAGON BLACK HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b075cebf691511e285d63085a942bd8e'),
+ ('B02-A406/8','WHITE',1,'7eed0afa678b11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b07eea4f678b11e28b7a3085a942bd8e'),
+ ('B02-MX648/9','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','26000.00','19500.00','0.00','b0936a7b660811e2bd7d3085a942bd8e'),
+ ('A01-FLD 150W','WITH SENSOR',1,'621bebf3620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b0e6ec6a74c211e2a6393085a942bd8e'),
+ ('A01-0283/1xGU10','ALUMINUM HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b1282506690f11e285d63085a942bd8e'),
+ ('B04-E0291S-SY/3Px1w','LED warm',1,'847af19c7a7511e2baaf3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b143e5157a7a11e2baaf3085a942bd8e'),
+ ('B02-MB475/2','G9 WHITE',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b15d6db2679611e28b7a3085a942bd8e'),
+ ('A01-640404/2xPLC','6\'\' SQUARE WHITE HOUSING PUSH GLASS',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b1d30442692d11e285d63085a942bd8e'),
+ ('B04-G0257/1xE27 SR','SR',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b1f4250374cf11e2a6393085a942bd8e'),
+ ('B04-F0169-110/1-Gu10','STAINLESS HOUSING',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b28ef14e7a7811e2baaf3085a942bd8e'),
+ ('B02-MD902/9','CONE SILVER',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','20670.00','15500.00','0.00','b2f2943965f211e2bd7d3085a942bd8e'),
+ ('B02-MX578/9','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','26000.00','19500.00','0.00','b2fa61ff660511e2bd7d3085a942bd8e'),
+ ('B02-MT241/25HB','TRI PAD',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','5','6000.00','4500.00','66.00','b304f7ce679511e28b7a3085a942bd8e'),
+ ('B28-3060L-RD','Housing only',1,'57503562620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b3a0f2897fc811e2885e3085a942bd8e'),
+ ('B04-C0119H350/1xE27','Stainless Housing',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b527c39b7a7011e2baaf3085a942bd8e'),
+ ('B02-MB508B/1','BIG',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b5537cc7679711e28b7a3085a942bd8e'),
+ ('A01-DOME#1','METALHALIDE',1,'96ce6f0a679911e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b683cac7679911e28b7a3085a942bd8e'),
+ ('A01-227/1xMR16','ROUND WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b6882fe2691111e285d63085a942bd8e'),
+ ('B02-MX487/4','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','11335.00','8500.00','0.00','b6c28dd965fa11e2bd7d3085a942bd8e'),
+ ('B02-MX764/1','ROUND WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','4670.00','3500.00','0.00','b6d75b75660a11e2bd7d3085a942bd8e'),
+ ('B04-12\" DOME','ALUMINUM SANDBLAZTED',1,'96ce6f0a679911e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b6fb42827bc911e29da73085a942bd8e'),
+ ('B02-MX873/13','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','26670.00','20000.00','0.00','b7b940db677e11e28b7a3085a942bd8e'),
+ ('B04-A0269-sqr/1xE27','SR die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b7e676e37a3b11e2baaf3085a942bd8e'),
+ ('B04-DOME-14\'\'-E27 S','SHINNY REFLECTOR',1,'96ce6f0a679911e28b7a3085a942bd8e','14\'\'',NULL,'','0','590.00','440.00','0.00','b7e95ed77b2611e28a0b3085a942bd8e'),
+ ('B02-MT9377/1','',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b7fb6def679111e28b7a3085a942bd8e'),
+ ('B04-E0291L-SY/6Px1w','LED warm',1,'847af19c7a7511e2baaf3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b8f277517a7a11e2baaf3085a942bd8e'),
+ ('B02-MD983/1W','WHITE',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','7335.00','5800.00','0.00','b926256c65f911e2bd7d3085a942bd8e'),
+ ('A01-5909/2xE27-WH','SQUARE WHITE DIE CAST ALUMINUM HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','b93de46c691c11e285d63085a942bd8e'),
+ ('B02-MX721/4','CLEAR & WHITE FROSTED',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','16800.00','12600.00','0.00','ba0d0497660911e2bd7d3085a942bd8e'),
+ ('B02-MT8002/1B','BLACK',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','bb3f3700679011e28b7a3085a942bd8e'),
+ ('B04-G0433S/1 SY','ACRYLIC COVER GREY DIE CAST ALUMINUM HOUSING',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','3935.00','2950.00','0.00','bbc1fcd874c611e2a6393085a942bd8e'),
+ ('B04-7473/1xG9-SY','SY die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','bbce07257a3c11e2baaf3085a942bd8e'),
+ ('B02-MX896/6','PLATE WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','14000.00','10500.00','0.00','bc4e4429677f11e28b7a3085a942bd8e'),
+ ('B04-16\" DOME TYPE','ALUMINUM SANDBLAZTED',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','bd45f3d07bd811e29da73085a942bd8e'),
+ ('A01-8740/1xE27-WH','4\'\' ROUND WHITE HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','bee95a36692e11e285d63085a942bd8e'),
+ ('A01-95200/1xGU10-BK','ROUND BLACK HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','bf7e8c46691611e285d63085a942bd8e'),
+ ('B04-I0104B/1xE27-BK','Black housing only',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','bfcbef8d7a6011e2baaf3085a942bd8e'),
+ ('B02-MD800/8B','BLACK',1,'7eed0afa678b11e28b7a3085a942bd8e','',NULL,'','0','29000.00','21750.00','0.00','c06f8820678b11e28b7a3085a942bd8e'),
+ ('A01-650406/2xPLC','6\'\' ROUND WHITE HOUSING PUSH GLASS',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','c0e02e57692c11e285d63085a942bd8e'),
+ ('B02-0231/1','CONE CLEAR GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','7335.00','5500.00','0.00','c13e924b639611e284a33085a942bd8e'),
+ ('B02-MD938/5','',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','13070.00','9800.00','0.00','c186946f65f311e2bd7d3085a942bd8e'),
+ ('B02-MT9591/1Y','YELLOW',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2250.00','1800.00','0.00','c18d4a7d679211e28b7a3085a942bd8e'),
+ ('B02-MB508S/1','SMALL',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','c18ff7c5679711e28b7a3085a942bd8e'),
+ ('B02-MD604/5','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','c1e5d78263a911e284a33085a942bd8e'),
+ ('B02-MD646/6','ROUND GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','22000.00','16500.00','0.00','c299278663ad11e284a33085a942bd8e'),
+ ('B04-G0305L-rnd/1 SR','E27 socket ROUND',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','c2e46db274cb11e2a6393085a942bd8e'),
+ ('B02-A302/1(B)','BIG WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','4362.50','3490.00','0.00','c2f82ae5639911e284a33085a942bd8e'),
+ ('B04-B0198-150-H60/1','GREY DIE CAST ALUM. HOUSING',1,'11bd1eb5620f11e2928c3085a942bd8e','60CM',NULL,'','0','4375.00','3280.00','0.00','c337536e74c311e2a6393085a942bd8e'),
+ ('A01-JB0283/3xGU10','ALUMINUM MULTI-DIRECTIONAL HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','5','1.00','1.00','65.00','c34561c1691811e285d63085a942bd8e'),
+ ('B04-A0224/1xE27-SR','SR die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','c45c54b07a3a11e2baaf3085a942bd8e'),
+ ('A01-0146/1xMR16','ROUND SATIN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','6','1.00','1.00','65.00','c4676cef679a11e28b7a3085a942bd8e'),
+ ('B02-MX625/1R','RED',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','6335.00','4750.00','0.00','c572c8d6660711e2bd7d3085a942bd8e'),
+ ('B02-T9166/1','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1875.00','1500.00','0.00','c7a2208c679511e28b7a3085a942bd8e'),
+ ('A01-88803/1xGU10-BL','OCTAGON BLUE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','c7caa5b3691511e285d63085a942bd8e'),
+ ('B04-A0102/2-SV','SV die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','c84657517a3d11e2baaf3085a942bd8e'),
+ ('A01-650501/2xE27','SQUARE GREY HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','c8ffabbb692d11e285d63085a942bd8e'),
+ ('B28-C4002/3xE27 WHT','LEAF-WHT design',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','c97341727fc211e2885e3085a942bd8e'),
+ ('B02-MX602/5+1','ROUND WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','12670.00','9500.00','0.00','c9a04e06660611e2bd7d3085a942bd8e'),
+ ('B04-B0198-150/1 SY','BLACK DIE CAST ALUMINUM (H.O)',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','3310.00','2480.00','0.00','c9cf061074c411e2a6393085a942bd8e'),
+ ('B02-MB502/1','E27 W/ DIMMER',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ca08df59679611e28b7a3085a942bd8e'),
+ ('B04-F0173/1xMR16','STAINLESS HOUSING',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ca23fa657a7811e2baaf3085a942bd8e'),
+ ('B28-F047-52-AB','Ceiling fan with light',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','10','1.00','1.00','0.00','cac6e6da7fbc11e2885e3085a942bd8e'),
+ ('B02-MD850/3','ROUND WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8670.00','6500.00','0.00','cad3fc8465ea11e2bd7d3085a942bd8e'),
+ ('B02-MT9454/4','WHITE W/ DIMMER',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','cb219a7a679111e28b7a3085a942bd8e'),
+ ('B02-MX791/9','SILVER',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','cb23e51f660a11e2bd7d3085a942bd8e'),
+ ('A01-OPEN 6\'\'/2xE27','open horizontal white rim',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','cb91165474be11e2a6393085a942bd8e'),
+ ('B04-B0116H60/1 GY','GY E27 DIECAST ALUMINUM HOUSING',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','cc866aa37bd511e29da73085a942bd8e'),
+ ('B02-MD737/3','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','9335.00','7000.00','0.00','ccf4de80651c11e2abd53085a942bd8e'),
+ ('B02-MB543/1A','3XE27',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','cd934960679711e28b7a3085a942bd8e'),
+ ('A01-431B/1xG12-WH','RECESSED ROUND WHITE HOUSING DIRECTIONAL',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','5','1.00','1.00','65.00','ce258801691211e285d63085a942bd8e'),
+ ('B04-N0109 AC/1XE27','DOME-PRISMATIC HOUSING ONLY',1,'96ce6f0a679911e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ceb8e0567bd611e29da73085a942bd8e'),
+ ('A01-8740/1xPLC-WH','4\'\' ROUND WHITE HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','cecb6954692e11e285d63085a942bd8e'),
+ ('B02-MT8004/1','TREE-SILVER',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ceeb34d0679011e28b7a3085a942bd8e'),
+ ('B02-MX669/5+1A','SILVER',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','cefe4209660811e2bd7d3085a942bd8e'),
+ ('B04-G0278L-rec/1 SR','E27 socket RECTANGULAR SR',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','cf4bef8e74e411e2a6393085a942bd8e'),
+ ('A01-228/1xMR16','SQUARE WHITE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','d07cd18d691111e285d63085a942bd8e'),
+ ('A01-95200/1xGU10-BL','ROUND BLUE HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','d099c2df691611e285d63085a942bd8e'),
+ ('B02-MD786/3A','WHITE',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8670.00','6500.00','0.00','d1117fcb65cb11e2bd7d3085a942bd8e'),
+ ('B02-MD918/3','CLEAR',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','12000.00','9000.00','0.00','d316a22b65f211e2bd7d3085a942bd8e'),
+ ('B02-A366/3','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','6400.00','4800.00','0.00','d3af695c65f911e2bd7d3085a942bd8e'),
+ ('B04-G0335/1xE27-SY','SY D:23cm H:12.5 cm',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','d3cb616a74cd11e2a6393085a942bd8e'),
+ ('B04-G0305S-rnd/1 SR','E27 socket ROUND',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','d4d3327874cb11e2a6393085a942bd8e'),
+ ('B04-J0130/1','(70w-150w) FLOODLIGHT- METAL HALIDE',1,'336793337b2711e28a0b3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','d6c59ce27bce11e29da73085a942bd8e'),
+ ('B02-MX487/5+1','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','14670.00','11000.00','0.00','d71de06a65fa11e2bd7d3085a942bd8e'),
+ ('B02-MD968/1B','WHITE & BLACK',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','3735.00','2800.00','0.00','d760deaf65f311e2bd7d3085a942bd8e'),
+ ('B04-G0434/1xE27 SY','ACRYLIC COVER DIE CAST ALUMINUM HOUSING',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','2240.00','1680.00','0.00','d778817774c611e2a6393085a942bd8e'),
+ ('B04-G0267/1xE27-SR','SR small',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','d83cda6a74e311e2a6393085a942bd8e'),
+ ('B04-J0108/1xE40','250w-400w (425x400x155mm)',1,'6a7b2b1a7a6e11e2baaf3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','d943b7577a6e11e2baaf3085a942bd8e'),
+ ('B02-MX625/1W','WHITE',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','6335.00','4750.00','0.00','da10074e660711e2bd7d3085a942bd8e'),
+ ('B28-5001A','Housing only',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','da12b5987fc811e2885e3085a942bd8e'),
+ ('B02-T9414/1','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2250.00','1800.00','0.00','da7f6db8679511e28b7a3085a942bd8e'),
+ ('B04-DOME-16\'\'-E27 S','SHINNY REFLECTOR',1,'96ce6f0a679911e28b7a3085a942bd8e','16\'\'',NULL,'','0','710.00','530.00','0.00','dba8d0ba7b2611e28a0b3085a942bd8e'),
+ ('A01-88803/1xGU10-BR','OCTAGON BROWN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','dbc172ec691511e285d63085a942bd8e'),
+ ('B04-G0314S-SQR/1 SR','E27 socket SQUARE',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','dbd73a2874ca11e2a6393085a942bd8e'),
+ ('B02-MT9592/1B','BLACK',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2500.00','2000.00','0.00','dbfe7871679211e28b7a3085a942bd8e'),
+ ('A01-80401-102xG9','CUBE CLEAR GLASS HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','20','1.00','1.00','0.00','dc569f69691311e285d63085a942bd8e'),
+ ('B02-MX721/9','CLEAR & WHITE FROSTED GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','29335.00','22000.00','0.00','dd47df6e660911e2bd7d3085a942bd8e'),
+ ('B04-S6B/16Px1w-LED','LED',1,'336793337b2711e28a0b3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ddcf132d7bd111e29da73085a942bd8e'),
+ ('B02-MD817/1','',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','3335.00','2500.00','0.00','de99267065e911e2bd7d3085a942bd8e'),
+ ('B02-MT8006/1','SILVER-ROSE',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','decb86d1679011e28b7a3085a942bd8e'),
+ ('B04-G0276L-OVL/1 SR','E27 socket OVL SR',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','dfabe45974e411e2a6393085a942bd8e'),
+ ('B02-ML8018/1R','RED',1,'fbd2c056620f11e2928c3085a942bd8e','',NULL,'','0','8750.00','6550.00','0.00','dfc5fe2c639111e284a33085a942bd8e'),
+ ('B02-MX791/4','SILVER',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','e11d3f19660a11e2bd7d3085a942bd8e'),
+ ('B04-A0129/1xE27 SB','SB (par20)  die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','e144dd9c7a3e11e2baaf3085a942bd8e'),
+ ('B02-MX692/6','',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','11470.00','8600.00','0.00','e1f887de660811e2bd7d3085a942bd8e'),
+ ('B02-MX876/9','E14 BLK & WHT',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','18000.00','13500.00','0.00','e1ffe618677e11e28b7a3085a942bd8e'),
+ ('B28-C4005/3xE27','WOOD BROWN design',1,'adeb07fb620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','e310811d7fc311e2885e3085a942bd8e'),
+ ('B02-MD492/3','',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','5500.00','4400.00','0.00','e32a0960639b11e284a33085a942bd8e'),
+ ('B02-MX602/9','ROUND WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','23335.00','17500.00','0.00','e37e0d01660611e2bd7d3085a942bd8e'),
+ ('B04-G0251(4014)/1-SR','E27 socket SR',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','e391793174f511e2a6393085a942bd8e'),
+ ('A01-0401/1xPEANUT-SN','SQUARE SATIN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','e44dfab8690f11e285d63085a942bd8e'),
+ ('B04-G0408/1xE27','ACRYLIC COVER GREY DIE CAST ALUM. HOUSING',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','2240.00','1680.00','0.00','e517c3497b3611e28a0b3085a942bd8e'),
+ ('B02-MD758/1','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','2670.00','2000.00','0.00','e638bb6d651c11e2abd53085a942bd8e'),
+ ('A01- NOVILITE Gu10','35W GU10 HALOGEN BULB',1,'7217fd80620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','e652c4b574c211e2a6393085a942bd8e'),
+ ('B02-MB514/1B','E27 BROWN',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','e6b8777c679611e28b7a3085a942bd8e'),
+ ('B04-A0158/2xE27-SB','SB die cast up and down',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','e731ff7b7a3911e2baaf3085a942bd8e'),
+ ('B02-MD609/6','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','10000.00','7500.00','0.00','e7d690cd63a911e284a33085a942bd8e'),
+ ('B04-6517/3Px1w-LED','LED warm',1,'847af19c7a7511e2baaf3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','e819641e7a7a11e2baaf3085a942bd8e'),
+ ('B02-MD800/1B','BLACK GLASS',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','3000.00','3000.00','0.00','e81acfcc65cc11e2bd7d3085a942bd8e'),
+ ('B04-A0129/1xE27 SR','SR (par20)  die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','e868d1037a3e11e2baaf3085a942bd8e'),
+ ('B02-MT9572B/2','ROUND WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','4670.00','3500.00','0.00','e92d2b15679111e28b7a3085a942bd8e'),
+ ('B02-MD855/3xE27','OVAL WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','9070.00','6800.00','0.00','e9776a6465ea11e2bd7d3085a942bd8e'),
+ ('B04-E0147/1xE27-BK','BLACK die cast aluminum',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','1.00','1.00','0.00','e9c99e777a7511e2baaf3085a942bd8e'),
+ ('B04-E0133/1xE27-BK','BLACK DIE CAST ALUMINUM (H.O)',1,'58c1bf6874c411e2a6393085a942bd8e','',NULL,'','0','870.00','650.00','0.00','ead274937a7311e2baaf3085a942bd8e'),
+ ('B04-9047/1xG9-SR','SR steplight',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','eae8cbc67a6711e2baaf3085a942bd8e'),
+ ('A01-DOME#2','METALHALIDE',1,'96ce6f0a679911e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','eb0035de679911e28b7a3085a942bd8e'),
+ ('B02-MD791/3','ACRYLIC',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ec0fa1a765cb11e2bd7d3085a942bd8e'),
+ ('B02-MD658/5','WHITE',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ec21dc5b63ad11e284a33085a942bd8e'),
+ ('B02-A366/6A','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','12250.00','9800.00','0.00','ec81446965f911e2bd7d3085a942bd8e'),
+ ('B04-G0315S-SQR/1 SR','E27 socket SQUARE',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ec85935c74ca11e2a6393085a942bd8e'),
+ ('B04-J0153/1-SR','SR DIE CAST ALUMINUM',1,'621bebf3620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ecb7d9607bce11e29da73085a942bd8e'),
+ ('B02-MX591/6+1','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','32670.00','24000.00','0.00','ece67410660511e2bd7d3085a942bd8e'),
+ ('B04-G0295/1xE27-SR','SR',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ed30c15e74e411e2a6393085a942bd8e'),
+ ('B04-B0198-180/1 SY','BLACK DIE CAST ALUMINUM (H.O)',1,'fc67cdee620e11e2928c3085a942bd8e','',NULL,'','0','3935.00','2950.00','0.00','ed4ccd7674c411e2a6393085a942bd8e'),
+ ('A01-550302/1xPLC','5\'\' ROUND WHITE HOUSING W/ GLASS COVER',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','15','1.00','1.00','50.00','eda3cde4691911e285d63085a942bd8e'),
+ ('B04-A0106/2xE27-SV','SV-(SR) die cast aluminum housing up and down',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','edb0dedc7a3d11e2baaf3085a942bd8e'),
+ ('B02-MX644/3B','BLACK',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','10470.00','7850.00','0.00','edbd8604660711e2bd7d3085a942bd8e'),
+ ('B02-ML219/1-CH','WHITE BODY',1,'fbd2c056620f11e2928c3085a942bd8e','',NULL,'','0','10000.00','7500.00','0.00','ef05ec54679811e28b7a3085a942bd8e'),
+ ('B02-MX918/6','',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','24000.00','18000.00','0.00','ef8f6d47678411e28b7a3085a942bd8e'),
+ ('B04-A0144/1xE27-ST','STAINLESS HOUSING',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','efa296ea7bd211e29da73085a942bd8e'),
+ ('B04-A0315-120/1 SY','GREY DIE CAST ALUMINUM (H.O)',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','3310.00','2480.00','0.00','efbd597c74c511e2a6393085a942bd8e'),
+ ('B04-D0172/3x1w-LED','WARM LIGHT',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','effe2e2d7a4511e2baaf3085a942bd8e'),
+ ('B02-MT9592/1R','RED',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','2500.00','2000.00','0.00','f06c525d679211e28b7a3085a942bd8e'),
+ ('A01-88803/1xGU10-CL','OCTAGON CLEAR HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f09c7b3e691511e285d63085a942bd8e'),
+ ('B02-MT8007/1','',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f11084dd679011e28b7a3085a942bd8e'),
+ ('B04-I0104A/1E27- BK','BLACK HOUSING',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f18a8bf074c811e2a6393085a942bd8e'),
+ ('B02-MD758/3','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','8000.00','6000.00','0.00','f1932be7651c11e2abd53085a942bd8e'),
+ ('A01-95200/1xGU10-BR','ROUND BROWN HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f2179a91691611e285d63085a942bd8e'),
+ ('B04-7473/1xG9-CF','CF die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f28ab11f7a3c11e2baaf3085a942bd8e'),
+ ('B04-F0169/1-MR16-ST','STAINLESS HOUSING',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f2bb4b107a7611e2baaf3085a942bd8e'),
+ ('B04-C0120H80/1xE27','STAINLESS HOUSING',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f33a14e47bd511e29da73085a942bd8e'),
+ ('B02-MB543/3A','3XE27 BIG',1,'15a0b419621011e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f3532bd8679711e28b7a3085a942bd8e'),
+ ('B02-A302/1(S)','SMALL WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','3600.00','2880.00','0.00','f3848fe9639911e284a33085a942bd8e'),
+ ('B02-MX487/8','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','19735.00','14800.00','0.00','f3db0e2e65fa11e2bd7d3085a942bd8e'),
+ ('B04-G0437/1X E27-SY','E27 socket E27',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f40c1de674c611e2a6393085a942bd8e'),
+ ('B04-I01311A/1xE27-SB','SB SOLUCCIONE ONLY',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f410e6d974c911e2a6393085a942bd8e'),
+ ('B04-E0224A/1xE27','GREY DIE CAST ALUMINUM HOUSING',1,'847af19c7a7511e2baaf3085a942bd8e','',NULL,'','0','1950.00','1450.00','0.00','f4967dec7ef111e28c1d3085a942bd8e'),
+ ('A01- 5\" ROUND-w','WHITE HOUSING',1,'57503562620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f4d370d474c111e2a6393085a942bd8e'),
+ ('B04-F0157A-260-ST','Stainless housing',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f5b49a8c7a6b11e2baaf3085a942bd8e'),
+ ('A01-80803-42','DIAMOND GLASS HOUSING',1,'5b45a205679a11e28b7a3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f623747c691311e285d63085a942bd8e'),
+ ('B04-D0128/1xMR16-BK','BK inground',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f65ed8f07a4311e2baaf3085a942bd8e'),
+ ('B02-MX739/3','ROUND WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','5070.00','3800.00','0.00','f6806d74660911e2bd7d3085a942bd8e'),
+ ('B02-MB514/1W','WHITE',1,'8bdc61cd620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f6935d4b679611e28b7a3085a942bd8e'),
+ ('A01-650501/2xPLC','6\'\' SQUARE GREY HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f6d41ef9692d11e285d63085a942bd8e'),
+ ('A01-3043/1xE27-SN','3\'\' SQUARE SATIN HOUSING',1,'497c8c99620e11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f7087ef5691111e285d63085a942bd8e'),
+ ('B04-I0311A/1xE27-SB','SB SOLUCCIONE ONLY',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f7d6ab2874c911e2a6393085a942bd8e'),
+ ('B02-MD597/4W','WHITE',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','7250.00','5800.00','0.00','f80bdfe763a211e284a33085a942bd8e'),
+ ('A01-JB8822/2 Gu10','SPOTLIGHT-ALUMINUM',1,'3020dd1d620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f822fd6c74c011e2a6393085a942bd8e'),
+ ('B02-MX832/4','',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','9350.00','7000.00','0.00','f85111b8660a11e2bd7d3085a942bd8e'),
+ ('B04-H0111/1xE27','SR steplight',1,'4ba5fe5b620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f856a1a47a6911e2baaf3085a942bd8e'),
+ ('B04-G0295/1xE27-BK','BLACK',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','f919d64474e411e2a6393085a942bd8e'),
+ ('B02-MX603/5','WHITE GLASS',1,'bb7e1866620c11e2928c3085a942bd8e','',NULL,'','0','10400.00','7800.00','0.00','f972abab660611e2bd7d3085a942bd8e'),
+ ('B02-MT9582/1','WHITE',1,'7d83f782620c11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','fae17882679111e28b7a3085a942bd8e'),
+ ('B02-MX949/8+4+1','',1,'80e9d9d4620d11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','fb1d9213678a11e28b7a3085a942bd8e'),
+ ('B28-5001B','Housing only',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','fb271ceb7fc811e2885e3085a942bd8e'),
+ ('B04-A003','EXIT SIGN (WORD ONLY)',1,'beff91da620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','fc1618507bcb11e29da73085a942bd8e'),
+ ('B02-MD561/1','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','3112.50','2490.00','0.00','fc168328639c11e284a33085a942bd8e'),
+ ('B04-A0132/2xE27 SB','SR (par38)  die cast aluminum housing',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','fc2693fe7a3e11e2baaf3085a942bd8e'),
+ ('B02-MD578/3','WHITE GLASS',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','9335.00','7000.00','0.00','fc2bc29c63a111e284a33085a942bd8e'),
+ ('B12','WALL LAMP OUTDOOR',1,'20a427fa605111e2b9743085a942bd8e','',NULL,'','0','1.00','1.00','0.00','fc452165620911e2928c3085a942bd8e'),
+ ('B04-D0174/3Px1w-LED','WARM LIGHT',1,'9efbd113620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','fd1f160d7a4511e2baaf3085a942bd8e'),
+ ('B04-C0156H80/1xE27','STAINLESS HOUSING',1,'11bd1eb5620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','fd3444dd7bd511e29da73085a942bd8e'),
+ ('B04-S6A/28Px1w-LED','LED warm',1,'336793337b2711e28a0b3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','fd55a2f97bd111e29da73085a942bd8e'),
+ ('B02-MD614/3','',1,'e3126637620f11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','fe2edc2263a911e284a33085a942bd8e'),
+ ('B04-G0316S-SQR/1 SR','E27 socket SQUARE',1,'fbccd132620b11e2928c3085a942bd8e','',NULL,'','0','1.00','1.00','0.00','ffc4c5ae74ca11e2a6393085a942bd8e');
+/*!40000 ALTER TABLE `item` ENABLE KEYS */;
+
+
+--
+-- Definition of table `item_type`
+--
+
+DROP TABLE IF EXISTS `item_type`;
+CREATE TABLE `item_type` (
+  `code` int(10) unsigned DEFAULT NULL,
+  `descriptor` varchar(45) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `item_type`
+--
+
+/*!40000 ALTER TABLE `item_type` DISABLE KEYS */;
+INSERT INTO `item_type` (`code`,`descriptor`) VALUES 
+ (1,'Product'),
+ (2,'Service'),
+ (3,'Opex'),
+ (4,'Capex'),
+ (5,'Accruals');
+/*!40000 ALTER TABLE `item_type` ENABLE KEYS */;
+
+
+--
+-- Definition of table `location`
+--
+
+DROP TABLE IF EXISTS `location`;
+CREATE TABLE `location` (
+  `code` char(20) DEFAULT '',
+  `descriptor` char(50) DEFAULT '',
+  `id` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `CODE` (`code`),
+  KEY `DESCRIPTOR` (`descriptor`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `location`
+--
+
+/*!40000 ALTER TABLE `location` DISABLE KEYS */;
+INSERT INTO `location` (`code`,`descriptor`,`id`) VALUES 
+ ('MAIN','MAIN OFFICE','a8d298fe605311e2b9743085a942bd8e');
+/*!40000 ALTER TABLE `location` ENABLE KEYS */;
+
+
+--
+-- Definition of table `locationinvty`
+--
+
+DROP TABLE IF EXISTS `locationinvty`;
+CREATE TABLE `locationinvty` (
+  `itemid` char(32) NOT NULL,
+  `locationid` char(32) NOT NULL,
+  `onhand` decimal(9,0) DEFAULT '0',
+  `id` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ITEMID` (`itemid`),
+  KEY `LOCATIONID` (`locationid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `locationinvty`
+--
+
+/*!40000 ALTER TABLE `locationinvty` DISABLE KEYS */;
+/*!40000 ALTER TABLE `locationinvty` ENABLE KEYS */;
+
+
+--
+-- Definition of table `salesman`
+--
+
+DROP TABLE IF EXISTS `salesman`;
+CREATE TABLE `salesman` (
+  `code` char(20) DEFAULT '',
+  `descriptor` char(50) DEFAULT '',
+  `id` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `CODE` (`code`),
+  KEY `DESCRIPTOR` (`descriptor`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `salesman`
+--
+
+/*!40000 ALTER TABLE `salesman` DISABLE KEYS */;
+INSERT INTO `salesman` (`code`,`descriptor`,`id`) VALUES 
+ ('achua','Adrian Chua','3c9640d327c011e2b4065404a67007de'),
+ ('jrsalunga','Jefferson Salunga','f80cd814272b11e2b1685404a67007de');
+/*!40000 ALTER TABLE `salesman` ENABLE KEYS */;
+
+
+--
+-- Definition of table `stockcard`
+--
+
+DROP TABLE IF EXISTS `stockcard`;
+CREATE TABLE `stockcard` (
+  `itemid` char(32) NOT NULL,
+  `locationid` char(32) NOT NULL,
+  `postdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `txndate` date NOT NULL,
+  `txncode` char(3) DEFAULT '',
+  `txnrefno` char(10) DEFAULT '',
+  `qty` decimal(7,0) DEFAULT '0',
+  `prevbal` decimal(9,0) DEFAULT '0',
+  `currbal` decimal(9,0) DEFAULT '0',
+  `prevbalx` decimal(9,0) DEFAULT '0',
+  `currbalx` decimal(9,0) DEFAULT '0',
+  `id` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ITEMID` (`itemid`),
+  KEY `LOCATIONID` (`locationid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `stockcard`
+--
+
+/*!40000 ALTER TABLE `stockcard` DISABLE KEYS */;
+INSERT INTO `stockcard` (`itemid`,`locationid`,`postdate`,`txndate`,`txncode`,`txnrefno`,`qty`,`prevbal`,`currbal`,`prevbalx`,`currbalx`,`id`) VALUES 
+ ('a6f86d11679a11e28b7a3085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 13:17:09','2013-04-11','APV','005','9','0','9','0','0','0edc37a6a26711e286235404a67007de'),
+ ('88da3e147fbd11e2885e3085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 11:52:20','2013-04-11','APV','002','5','0','5','0','0','359f3010a25b11e286235404a67007de'),
+ ('04fa3a5a173d11e2b55d5404a67007de','a8d298fe605311e2b9743085a942bd8e','2013-04-11 13:04:56','2013-04-11','APV','004','12','11','23','0','0','59ef1d70a26511e286235404a67007de'),
+ ('14a2783a691911e285d63085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 13:04:56','2013-04-11','APV','004','5','0','5','0','0','59ef538ca26511e286235404a67007de'),
+ ('ce258801691211e285d63085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 12:58:19','2013-04-11','APV','002','5','0','5','0','0','6d784567a26411e286235404a67007de'),
+ ('1f85c2f174c211e2a6393085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 12:58:19','2013-04-11','APV','002','6','56','62','0','0','6d787ba6a26411e286235404a67007de'),
+ ('eda3cde4691911e285d63085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 13:34:21','2013-04-11','APV','007','15','0','15','0','0','75fe9b6ca26911e286235404a67007de'),
+ ('2e6246b974c311e2a6393085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 13:34:21','2013-04-11','APV','007','5','9','14','0','0','75fed166a26911e286235404a67007de'),
+ ('04fa3a5a173d11e2b55d5404a67007de','a8d298fe605311e2b9743085a942bd8e','2013-04-11 12:38:09','2013-04-11','APV','001','6','5','11','0','0','9bd4e3fda26111e286235404a67007de'),
+ ('04fa3a5a173d11e2b55d5404a67007de','a8d298fe605311e2b9743085a942bd8e','2013-04-11 13:49:45','2013-04-11','APV','008','6','28','34','0','0','9c69f5a2a26b11e286235404a67007de'),
+ ('1f85c2f174c211e2a6393085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 11:48:50','2013-04-11','APV','001','56','0','56','0','0','b8b0711aa25a11e286235404a67007de'),
+ ('2e6246b974c311e2a6393085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 11:48:50','2013-04-11','APV','001','9','0','9','0','0','b8b0ae7aa25a11e286235404a67007de'),
+ ('c4676cef679a11e28b7a3085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 13:22:22','2013-04-11','APV','006','6','0','6','0','0','c9618932a26711e286235404a67007de'),
+ ('2cf1036b7a6111e2baaf3085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 13:15:58','2013-04-11','APV','003','9','0','9','0','0','e49ceea7a26611e286235404a67007de'),
+ ('04fa3a5a173d11e2b55d5404a67007de','a8d298fe605311e2b9743085a942bd8e','2013-04-11 13:15:58','2013-04-11','APV','003','5','23','28','0','0','e49d626aa26611e286235404a67007de'),
+ ('b304f7ce679511e28b7a3085a942bd8e','a8d298fe605311e2b9743085a942bd8e','2013-04-11 13:15:58','2013-04-11','APV','003','5','0','5','0','0','e49dc5e9a26611e286235404a67007de'),
+ ('04fa3a5a173d11e2b55d5404a67007de','a8d298fe605311e2b9743085a942bd8e','2013-04-11 12:33:37','2013-04-11','APV','003','5','0','5','0','0','f9bb6e06a26011e286235404a67007de');
+/*!40000 ALTER TABLE `stockcard` ENABLE KEYS */;
+
+
+--
+-- Definition of table `supplier`
+--
+
+DROP TABLE IF EXISTS `supplier`;
+CREATE TABLE `supplier` (
+  `code` char(20) DEFAULT '',
+  `descriptor` char(50) DEFAULT '',
+  `payee` char(50) DEFAULT '',
+  `cperson` char(50) DEFAULT '',
+  `ctitle` char(50) DEFAULT '',
+  `terms` decimal(3,0) DEFAULT '0',
+  `balance` decimal(15,2) DEFAULT '0.00',
+  `address` char(120) DEFAULT '',
+  `phone` char(20) DEFAULT '',
+  `fax` char(20) DEFAULT '',
+  `mobile` char(20) DEFAULT '',
+  `email` char(120) DEFAULT '',
+  `notes` text,
+  `id` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `CODE` (`code`),
+  KEY `DESCRIPTOR` (`descriptor`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `supplier`
+--
+
+/*!40000 ALTER TABLE `supplier` DISABLE KEYS */;
+INSERT INTO `supplier` (`code`,`descriptor`,`payee`,`cperson`,`ctitle`,`terms`,`balance`,`address`,`phone`,`fax`,`mobile`,`email`,`notes`,`id`) VALUES 
+ ('smt','San Mig Trading','Carlos Tan','Edwin Lacierda','Manager','5','10910.50','Mangga St., Brgy 621, Sta Mesa, Manila 1006','522-6935','','1145445','smt@yahoo.com','di','9a5f24f2824111e2b7ed5404a67007de');
+/*!40000 ALTER TABLE `supplier` ENABLE KEYS */;
+
+
+--
+-- Definition of table `todo`
+--
+
+DROP TABLE IF EXISTS `todo`;
+CREATE TABLE `todo` (
+  `description` varchar(120) DEFAULT NULL,
+  `status` varchar(45) DEFAULT NULL,
+  `id` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `todo`
+--
+
+/*!40000 ALTER TABLE `todo` DISABLE KEYS */;
+INSERT INTO `todo` (`description`,`status`,`id`) VALUES 
+ ('Study Backbone','incomplete','3E63899EB7ED45D799BAEDA2FC75DF2F'),
+ ('Pick up milk!','incomplete','6eba08627fdd11e2b7ed5404a67007de'),
+ ('Pick up milk!','incomplete','73494398182b11e2ad9f5404a67007de'),
+ ('Pick up milk!','incomplete','bf9f75cb7fdd11e2b7ed5404a67007de'),
+ ('Pick up milk!','incomplete','cf52f5e27fdd11e2b7ed5404a67007de'),
+ ('Pick up milk!','incomplete','efd1e564855811e289925404a67007de'),
+ ('Pick up milk!','incomplete','f4ad5e79855811e289925404a67007de');
+/*!40000 ALTER TABLE `todo` ENABLE KEYS */;
+
+
+--
+-- Definition of function `GETGUID`
+--
+
+DROP FUNCTION IF EXISTS `GETGUID`;
+
+DELIMITER $$
+
+/*!50003 SET @TEMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ $$
+CREATE DEFINER=`root`@`localhost` FUNCTION `GETGUID`() RETURNS char(32) CHARSET utf8
+BEGIN
+      RETURN UPPER( REPLACE( UUID(), "-", "" ) );
+   END $$
+/*!50003 SET SESSION SQL_MODE=@TEMP_SQL_MODE */  $$
+
+DELIMITER ;
+
+--
+-- Definition of view `vapvdtl`
+--
+
+DROP TABLE IF EXISTS `vapvdtl`;
+DROP VIEW IF EXISTS `vapvdtl`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vapvdtl` AS select `a`.`id` AS `id`,`b`.`descriptor` AS `item`,`a`.`qty` AS `qty`,`a`.`unitcost` AS `unitcost`,`a`.`amount` AS `amount` from (`apvdtl` `a` join `item` `b`) where (`a`.`itemid` = `b`.`id`) order by 2;
+
+--
+-- Definition of view `vapvhdr`
+--
+
+DROP TABLE IF EXISTS `vapvhdr`;
+DROP VIEW IF EXISTS `vapvhdr`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vapvhdr` AS select `a`.`refno` AS `refno`,`a`.`date` AS `date`,`b`.`descriptor` AS `location`,`c`.`descriptor` AS `supplier`,`a`.`terms` AS `terms`,`a`.`totqty` AS `totqty`,`a`.`totamount` AS `totamount`,`a`.`totdebit` AS `totdebit`,`a`.`totcredit` AS `totcredit`,`a`.`balance` AS `balance`,`a`.`posted` AS `posted`,`a`.`id` AS `id` from ((`apvhdr` `a` join `location` `b`) join `supplier` `c`) where ((`a`.`locationid` = `b`.`id`) and (`a`.`supplierid` = `c`.`id`)) order by `a`.`date` desc;
+
+--
+-- Definition of view `vcategory`
+--
+
+DROP TABLE IF EXISTS `vcategory`;
+DROP VIEW IF EXISTS `vcategory`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vcategory` AS select `a`.`code` AS `code`,`a`.`descriptor` AS `descriptor`,`b`.`descriptor` AS `type`,`a`.`id` AS `id` from (`category` `a` join `category_type` `b`) where (`a`.`type` = `b`.`code`) order by `a`.`type`;
+
+--
+-- Definition of view `vcustomer`
+--
+
+DROP TABLE IF EXISTS `vcustomer`;
+DROP VIEW IF EXISTS `vcustomer`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vcustomer` AS select `a`.`id` AS `id`,`a`.`code` AS `code`,`a`.`descriptor` AS `descriptor`,`a`.`cperson` AS `cperson`,`a`.`ctitle` AS `ctitle`,`b`.`descriptor` AS `salesman`,`a`.`terms` AS `terms`,`a`.`balance` AS `balance` from (`customer` `a` join `salesman` `b`) where (`a`.`salesmanid` = `b`.`id`);
+
+--
+-- Definition of view `vitem`
+--
+
+DROP TABLE IF EXISTS `vitem`;
+DROP VIEW IF EXISTS `vitem`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vitem` AS select `a`.`code` AS `code`,`a`.`descriptor` AS `descriptor`,`c`.`descriptor` AS `type`,`b`.`descriptor` AS `category`,`a`.`onhand` AS `onhand`,`a`.`unitprice` AS `unitprice`,`a`.`floorprice` AS `floorprice`,`a`.`unitcost` AS `unitcost`,`a`.`umeasure` AS `umeasure`,`a`.`id` AS `id` from ((`item` `a` join `category` `b`) join `item_type` `c`) where ((`a`.`categoryid` = `b`.`id`) and (`a`.`type` = `c`.`code`));
+
+
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

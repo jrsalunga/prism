@@ -1,0 +1,8 @@
+RewriteEngine on
+
+RewriteRule ^accounts-payable-voucher(\/.*)*$ /prism/transactions/accounts-payable-voucher.php
+RewriteRule ^accounts-payable-hdr(\/.*)*$ /prism/transactions/accounts-payable-hdr.php
+RewriteRule ^accounts-payable(\/.*)*$ /prism/transactions/accounts-payable.php
+RewriteRule ^accounts-payable-print(\/.*)*$ /prism/transactions/accounts-payable-print.php
+
+

@@ -1,0 +1,26 @@
+RewriteEngine on
+
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule ^(.*)$ index.php?url=$1 [PT,L]
+#RewriteRule ^(.*)$ $1 [PT,L]
+
+
+
+
+
+
+
+
+
+RewriteRule ^index(\/.*)*$ /prism/index.php
+RewriteRule ^dashboard(\/.*)*$ /prism/index.php
+RewriteRule ^login(\/.*)*$ /prism/login.php
+RewriteRule ^logout(\/.*)*$ /prism/logout.php
+
+
+ErrorDocument 400 /prism/index
+ErrorDocument 401 /prism/index
+ErrorDocument 403 /prism/index
+ErrorDocument 500 /prism/index
+ErrorDocument 404 /prism/index

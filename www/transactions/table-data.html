@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Document</title>
+
+
+<script src="../js/jquery-1.8.2.min.js"></script>
+<script>
+
+
+$.fn.serializeHTMLTable = function(){
+//function serializeHTMLTable(){
+	
+	var arr = $('.tb-detail tbody tr').map(function () {
+		
+		var table = $(this).parent().parent();
+		var o = {};	
+		
+		// iterate on <table> and find all the data
+		for(key in table.data()){
+			o[key] =  table.data(key);
+		};
+		
+		// iterate on <tr> and find all the data
+		for(key in $(this).data()){
+			o[key] =  $(this).data(key);
+		};
+		
+		// iterate on <tr> and find all the data
+		$('td', this).each(function () {
+	        for (key in this.dataset) {
+	            o[key] = this.dataset[key];
+	        }
+	    })
+	    
+		return o
+		
+	}).get();
+	
+	return arr;
+}
+
+$.fn.HTMLTableToJSON = function(){
+	
+	return JSON.stringify(this.serializeHTMLTable());
+
+}
+
+$(document).ready(function() {
+
+	var arr = $('.tb-detail tbody tr').map(function () {
+		
+		var table = $(this).parent().parent();
+		
+		var obj = {};
+		
+		for(key in table.data()){
+			obj[key] =  table.data(key);
+			//obj['id'] = $(this).data('id');
+		};
+		
+		for(key in $(this).data()){
+			obj[key] =  $(this).data(key);
+		};
+	    
+		
+	    
+		$('td', this).each(function () {
+	        for (key in this.dataset) {
+	            obj[key] = this.dataset[key];
+	        }
+	    })
+	    
+		return obj
+		
+	}).get();
+
+	//$('#result').text(JSON.stringify(arr))
+	
+	var x = $("table").HTMLTableToJSON();
+	
+	//console.log(serializeHTMLTable());	
+	
+	$('#result').text(x);
+
+});
+</script>
+
+</head>
+
+<body>
+
+<table width="500px" cellpadding="5" cellspacing="0" border="1" style="border-collapse:collapse;" data-apvhdrid="512" class="tb-detail">
+<tbody>
+	<tr data-id="1">
+    	<td data-itemid="001">Beer</td>
+        <td data-quantity="10">10 bottles</td>
+        <td data-unitcost="11.00">11.00</td>
+        <td data-amount="110.00">110.00</td>
+    </tr>
+    <tr data-id="2">
+    	<td data-itemid="002">Vodka</td>
+        <td data-quantity="20">20 bottles</td>
+        <td data-unitcost="100.00">100.00</td>
+        <td data-amount="2000.00">2000.00</td>
+    </tr>
+</tbody>
+</table>
+
+<div id="result">
+<!--
+[
+	{"apvhdrid":512, "id":1, "itemid":001, "quantity":10, "unitcost":"10.00", "amount":"110.00"},
+    {"apvhdrid":512, "id":2, "itemid":001, "quantity":20, "unitcost":"100.00", "amount":"2000.00"}
+]
+-->
+</div>
+
+</body>
+</html>
