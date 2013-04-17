@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	//ComputeItemAmount();
-
+  	
+	//$('.table-model input[type=checkbox]').css('border','1px red solid').val(1);
 	
 	
 	
@@ -13,6 +14,23 @@ $(document).ready(function() {
 	}).on('blur', function(){
 		$(this).toNumberFormat();
 	});
+	
+	
+	
+	$(".table-model input[type=checkbox].toggle").on('click', function(){
+		
+		//console.log($(this).data('input'));
+		var i = $(this).data('input');
+		
+		if($(this).attr('checked')){
+    		$('#'+ i).val(1);
+    	} else {
+			$('#'+ i).val(0);
+		}
+	});
+	
+	
+
 	
 	
 	
@@ -574,6 +592,7 @@ $.fn.serializeObject = function()
     $('input.currency', this).each(function(){ // select all the element in form
     	$(this).toDecimal(); // convert the value to e.g.  10,012.05 to 10012.05
     });                      // before sending to server
+
 
     var a = this.serializeArray();
 

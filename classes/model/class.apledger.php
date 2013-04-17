@@ -29,7 +29,7 @@ class Apledger extends DatabaseObject{
 		return $this->currbal = $this->amount + $this->prevbal;	
 	}
 	
-	public static function get_latest($supplierid=0){
+	public static function get_last_record($supplierid=0){
 		$sql = "SELECT * FROM ".self::$table_name." WHERE supplierid = '". $supplierid ."' ORDER BY postdate DESC LIMIT 1";
 		$result_array = self::find_by_sql($sql);
 		return !empty($result_array) ? array_shift($result_array) : false;	

@@ -1147,9 +1147,10 @@ function postingApvhdr($id){
         }
 
         
-        $last_apledger = Apledger::get_latest($apvhdr->supplierid);
+        $last_apledger = Apledger::get_last_record($apvhdr->supplierid);
         $last_apledger->currbal = isset($last_apledger->currbal) ? $last_apledger->currbal:0;
 
+        /*
         $apledger = new Apledger();
         $apledger->supplierid   = $apvhdr->supplierid;
         $apledger->txndate      = $apvhdr->date;
@@ -1158,9 +1159,13 @@ function postingApvhdr($id){
         $apledger->amount       = $apvhdr->totamount;
         $apledger->prevbal      = $last_apledger->currbal;
         $apledger->currbal      = $apledger->get_currbal();
+        */
+
+
+        $r = Apledger2::create('APV', $apvhdr->refno, $apvhdr->date, $apvhdr->totamount, $last_apledger->currbal, $apvhdr->supplierid);
         
-        if(!$apledger->save()){
-                 
+        //if(!$apledger->save()){
+        if(!$r) {        
             $database->rollback();
             echo json_encode($apledger->result_respone(1,'1156'));
             exit();
@@ -1224,20 +1229,20 @@ function postingApvhdr($id){
                     if(!$itu->save()){
                         
                         $database->rollback(); 
-                        echo json_encode($itu->result_respone(1,'no item to save')); 
+                        echo json_encode($itu->result_respone(1,'no item to save'. $item->id)); 
                         exit();
                     }
                 } else {
 
                     $database->rollback();
-                    echo json_encode($itu->result_respone(2,'unable to lock item '+ $itu->id));  
+                    echo json_encode($itu->result_respone(2,'unable to lock item '. $itu->id));  
                     exit();
                 }
 
 
-                //$last_stockcard = Stockcard::get_latest();
-                //$last_stockcard->currbal = isset($last_stockcard->currbal) ? $last_stockcard->currbal:0;
-                $last_stockcard->currbal = $item->onhand;
+                $last_stockcard = Stockcard::get_last_record($item->id);
+                $last_stockcard->currbal = isset($last_stockcard->currbal) ? $last_stockcard->currbal:0;
+                //$last_stockcard->currbal = $item->onhand;
 
                 $stockcard = new Stockcard();
                 $stockcard->itemid      = $item->id;

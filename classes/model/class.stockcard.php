@@ -31,8 +31,8 @@ class Stockcard extends DatabaseObject{
 	}
 	
 	
-	public static function get_latest(){
-		$sql = "SELECT * FROM ".self::$table_name." ORDER BY postdate DESC LIMIT 1";
+	public static function get_last_record($itemid=0){
+		$sql = "SELECT * FROM ".self::$table_name." WHERE itemid = '". $itemid ."' ORDER BY postdate DESC LIMIT 1";
 		$result_array = self::find_by_sql($sql);
 		return !empty($result_array) ? array_shift($result_array) : false;	
 	}

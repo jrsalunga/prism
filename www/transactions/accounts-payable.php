@@ -555,6 +555,7 @@ $(document).ready(function() {
                                             <td><label for="totcredit">Total Credit:</label></td>
                                             <td><input type="text" id="totcredit" name="totcredit" maxlength="19" style="width:120px;"  class="number currency" value="<?php echo isset($apvhdr->totcredit) ? $apvhdr->totcredit:"0.00"; ?>" readonly /></td>  
                                         </tr> 
+                                        
                                          <tr>
                                          	<td><label for="totamount">Total Amount:</label></td>
                                             <td><input type="text" id="totamount" name="totamount" maxlength="19" style="width:120px;"  class="number currency" readonly value="<?php echo isset($apvhdr->totamount) ? $apvhdr->totamount:"0.00"; ?>"  />
@@ -567,7 +568,16 @@ $(document).ready(function() {
                                             <td><input type="text" id="balance" name="balance" style="width:120px;" value="<?php echo isset($apvhdr->balance) ? $apvhdr->balance:"0.00"; ?>" class="number currency" readonly  />
                                             
                                         </tr>    
-                                           
+                                          <tr>
+                                        	<td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            
+                                            <td><label for="cancelled">Cancel:</label></td>
+                                            <td>
+                                            	<input type="checkbox" class="toggle" data-input="cancelled" <?php echo ($apvhdr->cancelled==1) ? 'checked="checked"':''; ?> />
+                                            	<input type="hidden" id="cancelled" name="cancelled" value="<?=$apvhdr->cancelled?>" />
+                                            </td>  
+                                        </tr>   
                                        
                                         
                                         <tr>
@@ -579,6 +589,7 @@ $(document).ready(function() {
 				                            	<!--<button id="frm-btn-save" class="minibutton" type="button">Save</button>-->
                                                 <button id="frm-btn-delete" class="minibutton" type="button" <?php echo isset($apvhdr->id) ? "":"disabled"; ?> >Delete</button>
                                                 <a href="<?=$relativeslash?>accounts-payable-hdr"  class="minibutton">Cancel</a>
+                                                 <button id="frm-btn-dtj" class="minibutton" type="button">Form to JSON</button>
 				                    			<!--
                                                 <button id="frm-btn-cancel" class="minibutton" type="button">Cancel</button>  
                                                 <button id="frm-btn-dtj" class="minibutton" type="button">Form to JSON</button>
@@ -636,7 +647,8 @@ $(document).ready(function() {
 								$apvdtls = Apvdtl::find_all_by_field_id('apvhdr',$apvhdr->id);
 								
 								//echo json_encode($apvdtls);
-								
+								$totqty = 0;
+								$totamount = 0;
 								
 							  	foreach($apvdtls as $apvdtl){
 									$item_name = Item::row($apvdtl->itemid,0);

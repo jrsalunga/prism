@@ -11,7 +11,7 @@ defined('DS') ? null : define('DS', DIRECTORY_SEPARATOR);
 defined('ROOT') ? null : define('ROOT', dirname(dirname(__FILE__)));
 defined('TEMPLATE_PATH') ? null : define('TEMPLATE_PATH',ROOT.DS.'templates');
 
-defined('DEVELOPMENT_ENVIRONMENT') ? null : define('DEVELOPMENT_ENVIRONMENT', false);
+defined('DEVELOPMENT_ENVIRONMENT') ? null : define('DEVELOPMENT_ENVIRONMENT', true);
 defined('SERVER_LIVE') ? null : define('SERVER_LIVE', false);
 
 
@@ -64,6 +64,7 @@ require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.apvdtl.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.todo.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.apledger.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.stockcard.php');
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.ledger.php');
 
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.category.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.item.php');
