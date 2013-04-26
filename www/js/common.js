@@ -1721,6 +1721,14 @@ function deleteParentChild(id) {
 
 
 
+function saveTableModel(){
+	var id = $(".table-model #id").val();
+	var role = $(".table-model").data("role");
+}
+
+
+
+
 
 
 

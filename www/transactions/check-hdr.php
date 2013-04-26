@@ -241,8 +241,8 @@ $(document).ready(function() {
 								<div class="kk">Transactions</div>
                            	</div>
                             <ul class="fd">
-                            	<li class="active"><a href="<?=$relativeslash?>accounts-payable-hdr">Accounts Payable</a></li>
-                            	<li><a href="<?=$relativeslash?>check-hdr">Check </a></li>
+                            	<li><a href="<?=$relativeslash?>accounts-payable-hdr">Accounts Payable</a></li>
+                            	<li class="active"><a href="<?=$relativeslash?>check-hdr">Check </a></li>
                                 <li><a href="<?=$relativeslash?>invoice">Invoice</a></li>
                               
                             </ul>
@@ -267,20 +267,20 @@ $(document).ready(function() {
 				<td>
                 	<div id="c-content">
                     	<header>
-                    		<h1>Accounts Payable</h1>
+                    		<h1>Checks</h1>
                         </header>
                         <div id="breadcrum">
                         	<ul>
                             	<li><a href="<?=$relativeslash?>../index">Home</a></li>
                                 <li><a href="#">Transactions</a></li>     
-                                <li>Accounts Payable</li>                        
+                                <li>Checks</li>                        
                             </ul>
                         </div>
                         <div id="c-content-toolbar">
                         	<!--
                             <button  id="frm-item-new" class="toolbar-minibutton" type="button" data-toggle="modal" data-target="#mdl-frm-category">New</button>
                             -->
-                            <a href="accounts-payable" class="toolbar-minibutton" accesskey="n">New</a>
+                            <a href="check" class="toolbar-minibutton" accesskey="n">New</a>
                         </div>
                         <!--
                         <div id="c-frm-container">

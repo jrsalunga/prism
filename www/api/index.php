@@ -107,6 +107,7 @@ $app->put('/post/detail/:table/:table2/:apvhdrid', 'putDetail');
 
 // posting
 $app->post('/txn/post/apvhdr/:id', 'postingApvhdr');
+$app->post('/txn/post/apvhdr/:id/cancelled', 'postingCancelledApvhdr');
 
 
  /*****************************  Run App **************************/
@@ -1212,68 +1213,73 @@ function postingApvhdr($id){
         $arItem = array();
 
         $apvdtl_items = Apvdtl::find_all_by_field_id('apvhdr',$id);
-        foreach ($apvdtl_items as $apv_items) {
-            
-            $item = Item::find_by_id($apv_items->itemid);  
+        if(!isset($apvdtl_items)) {
+            foreach ($apvdtl_items as $apv_items) {
+                
+                $item = Item::find_by_id($apv_items->itemid);  
 
-            array_push($arItem, $item);
-            
-            if($item->is_product()){
+                array_push($arItem, $item);
+                
+                if($item->is_product()){
 
-                // $itu = item to be updated
-                $itu = new Item();
-                $itu->onhand = $item->onhand + $apv_items->qty;
-                $itu->unitcost = $apv_items->unitcost;
-                $itu->id = $item->id;
+                    // $itu = item to be updated
+                    $itu = new Item();
+                    $itu->onhand = $item->onhand + $apv_items->qty;
+                    $itu->unitcost = $apv_items->unitcost;
+                    $itu->id = $item->id;
 
-                if($itu->lock_record()) {
+                    if($itu->lock_record()) {
 
-                    if(!$itu->save()){
-                        
-                        $database->rollback(); 
-                        echo json_encode($itu->result_respone(1,'no item to save'. $item->id)); 
+                        if(!$itu->save()){
+                            
+                            $database->rollback(); 
+                            echo json_encode($itu->result_respone(1,'no item to save'. $item->id)); 
+                            exit();
+                        }
+                    } else {
+
+                        $database->rollback();
+                        echo json_encode($itu->result_respone(2,'unable to lock item '. $itu->id));  
                         exit();
                     }
-                } else {
-
-                    $database->rollback();
-                    echo json_encode($itu->result_respone(2,'unable to lock item '. $itu->id));  
-                    exit();
-                }
 
 
-                $last_stockcard = Stockcard::get_last_record($item->id);
-                $last_stockcard_currbal = isset($last_stockcard->currbal)  ? $last_stockcard->currbal:0;
-                //$last_stockcard->currbal = $item->onhand;
+                    $last_stockcard = Stockcard::get_last_record($item->id);
+                    $last_stockcard_currbal = isset($last_stockcard->currbal)  ? $last_stockcard->currbal:0;
+                    //$last_stockcard->currbal = $item->onhand;
 
-                $stockcard = new Stockcard();
-                $stockcard->itemid      = $item->id;
-                $stockcard->locationid  = $apvhdr->locationid;
-                $stockcard->txndate     = $apvhdr->date;
-                $stockcard->txncode     = 'APV';
-                $stockcard->txnrefno    = $apvhdr->refno;
-                $stockcard->qty         = $apv_items->qty;
-                $stockcard->prevbal     = $last_stockcard_currbal;
-                $stockcard->currbal     = $stockcard->get_currbal();
-                //$stockcard->prevbalx    =;
-                //$stockcard->currbalx    =;
+                    $stockcard = new Stockcard();
+                    $stockcard->itemid      = $item->id;
+                    $stockcard->locationid  = $apvhdr->locationid;
+                    $stockcard->txndate     = $apvhdr->date;
+                    $stockcard->txncode     = 'APV';
+                    $stockcard->txnrefno    = $apvhdr->refno;
+                    $stockcard->qty         = $apv_items->qty;
+                    $stockcard->prevbal     = $last_stockcard_currbal;
+                    $stockcard->currbal     = $stockcard->get_currbal();
+                    //$stockcard->prevbalx    =;
+                    //$stockcard->currbalx    =;
 
-                if($stockcard->lock_record()){
+                    if($stockcard->lock_record()){
 
-                    if(!$stockcard->save()){
-                        
-                        $database->rollback(); 
-                        echo json_encode($stockcard->result_respone(1,'1240')); 
+                        if(!$stockcard->save()){
+                            
+                            $database->rollback(); 
+                            echo json_encode($stockcard->result_respone(1,'1240')); 
+                            exit();
+                        }
+                    } else {
+                         
+                        $database->rollback();
+                        echo json_encode($stockcard->result_respone(2)); 
                         exit();
                     }
-                } else {
-                     
-                    $database->rollback();
-                    echo json_encode($stockcard->result_respone(2)); 
-                    exit();
-                }
-            } // end is product
-        } // end foreach item
+                } // end is product
+            } // end foreach item
+        } else {
+            // no items/details on this apv
+            // just continue the transaction
+        }
 
         
         //$database->rollback();
@@ -1323,6 +1329,43 @@ function postingApvhdr($id){
    // echo json_encode($apledger);
 
 
+}
+
+
+
+function postingCancelledApvhdr($id){
+
+    $app = \Slim\Slim::getInstance();
+    //$database = MySQLDatabase::getInstance();
+    global $database;
+
+    $apvhdr = Apvhdr::find_by_id($id);
+
+    $apvhdr_last = new Apvhdr();
+    $apvhdr_last->posted = 1;
+    $apvhdr_last->cancelled = 1;
+    $apvhdr_last->id = $id;
+
+    if($apvhdr_last->save()){
+        
+        $respone = array(
+                'status' => 'success', 
+                'code' => '200',
+                'message' => 'success on posting cancelled APV',
+                'data' => array(
+                    'apvhdr' => $apvhdr_last,
+                )
+            );
+    } else {
+        
+        $respone = array(
+            'status' => 'error', 
+            'code' => '404',
+            'message' => 'error on posting cancelled APV'
+        );
+    }
+
+    echo json_encode($respone); 
 }
 
 

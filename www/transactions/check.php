@@ -3,9 +3,9 @@ include_once('../../lib/initialize.php');
 #error_reporting(E_ALL);
 #ini_set('display_errors','On');
 
-$cleanUrl->setParts('apvhdrid');
+$cleanUrl->setParts('cvhdrid');
 
-$apvhdr = Apvhdr::find_by_id($apvhdrid);
+$cvhdr = Cvhdr::find_by_id($cvhdrid);
 
 
 
@@ -267,7 +267,7 @@ function postCancelledApvhdr(id){
 
 $(document).ready(function() {
 	
-	
+	//console.log($(".table-model").data("role"));
 
 	initMenu();
 	
@@ -475,9 +475,9 @@ $(document).ready(function() {
 								<div class="kk">Transactions</div>
                            	</div>
                             <ul class="fd">
-                            	<li  class="active"><a href="<?=$relativeslash?>accounts-payable-hdr">Accounts Payable</a></li>
-                            	
-                              
+                            	<li><a href="<?=$relativeslash?>accounts-payable-hdr">Accounts Payable</a></li>
+                            	<li class="active"><a href="<?=$relativeslash?>check-hdr">Check </a></li>
+                                <li><a href="<?=$relativeslash?>invoice">Invoice</a></li>
                             </ul>
                         </div>	
                         <div id="menu3" class="nav">
@@ -503,13 +503,13 @@ $(document).ready(function() {
 				<td>
                 	<div id="c-content">
                     	<header>
-                    		<h1>Accounts Payable Voucher</h1>
+                    		<h1>Check Voucher</h1>
                         </header>
                         <div id="breadcrum">
                         	<ul>
                             	<li><a href="<?=$relativeslash?>../index">Home</a></li>
                                 <li><a href="#">Transactions</a></li>   
-                                <li><a href="<?=$relativeslash?>accounts-payable-hdr">Accounts Payable</a></li>   
+                                <li><a href="<?=$relativeslash?>check-hdr">Check</a></li>   
                                 <li> Voucher</li>                        
                             </ul>
                         </div>
@@ -518,15 +518,15 @@ $(document).ready(function() {
                         </div>
                         <div id="c-frm-container">
                         	<div id="frm-alert"></div>
-                        	<form id="frm-apvhdr" name="frm-apvhdr" class="table-model" data-table="apvhdr" action="" method="post">
+                        	<form id="frm-cvhdr" name="frm-cvhdr" class="table-model" data-table="cvhdr" data-role="parent" action="" method="post">
                             	<table cellpadding="0" cellspacing="0" border="0">
                                 	<tbody>
                                     	<tr>
                                         	<td><label for="refno">Reference No:</label></td>
-                                            <td><input type="text" id="refno" name="refno" maxlength="10" style="width:120px;"value="<?=$apvhdr->refno?>" required /></td>
+                                            <td><input type="text" id="refno" name="refno" maxlength="10" style="width:120px;" value="<?=$cvhdr->refno?>" required /></td>
                                             
                                             <td><label for="date">Date:</label></td>
-                                            <td><input type="date" id="date" name="date" style="width:120px;" value="<?php echo isset($apvhdr->date) ? $apvhdr->date:iso_date(); ?>"  placeholder="yyyy-mm-dd"  required /></td> 
+                                            <td><input type="date" id="date" name="date" style="width:120px;" value="<?php echo isset($cvhdr->date) ? $cvhdr->date:iso_date(); ?>"  placeholder="yyyy-mm-dd"  required /></td> 
                                         </tr>
                                         <tr>
                                         	<td><label for="supplierid">Supplier:</label></td>
@@ -538,7 +538,7 @@ $(document).ready(function() {
 																		
 						                        foreach( $sSalesmans as  $sSalesman) {
 						                            
-													if($apvhdr->supplierid==$sSalesman->id){
+													if($cvhdr->supplierid==$sSalesman->id){
 														echo "<option value=\"".strtolower($sSalesman->id)."\" selected=\"selected\">". uc_first($sSalesman->descriptor) ."</option>";
 													} else {
 						                            	echo "<option value=\"".strtolower($sSalesman->id)."\">". uc_first($sSalesman->descriptor) ."</option>";
@@ -547,69 +547,36 @@ $(document).ready(function() {
 						                        ?>
 						                   		</select>
                                             </td>
-                                          	<td><label for="locationid">Location:</label></td>
-                                        	<td>
-                                            	<select id="locationid" name="locationid" style="width:155px;">
-						                        <?php
-						                        
-						                        $sLocations = Location::find_all();
-												
-						                        foreach($sLocations as  $sLocation) {
-						                            
-													if($apvhdr->locationid==$sLocation->id){
-														echo "<option value=\"".strtolower($sLocation->id)."\" selected=\"selected\">". uc_first($sLocation->descriptor) ."</option>";
-													} else {
-						                            	echo "<option value=\"".strtolower($sLocation->id)."\">". uc_first($sLocation->descriptor) ."</option>";
-													}
-						                        }  
-						                        ?>
-						                   		</select>
-                                            </td>
+                                          	<td><label for="payee">Payee:</label></td>
+                                        	<td><input id="payee" type="text" maxlength="50" name="payee" value="<?=$cvhdr->payee?>" /></td>
                                         </tr>
                                         <tr>
-                                        	<td><label for="supprefno">Supplier Ref No:</label></td>
-                                            <td><input type="text" id="supprefno" name="supprefno" maxlength="10" style="width:120px;" value="<?=$apvhdr->supprefno?>"  /></td>
+                                        	<td><label for="bankcode">Bank Code:</label></td>
+                                            <td><input type="text" id="backcode" name="bankcode" maxlength="5" style="width:120px;" value="<?=$cvhdr->bankcode?>" /></td>
                                             
-                                            <td><label for="porefno">PO Ref No:</label></td>
-                                            <td><input type="text" id="porefno" name="porefno" maxlength="10" style="width:120px;"  value="<?=$apvhdr->porefno?>" /></td> 
+                                            <td><label for="checkno">Check No:</label></td>
+                                            <td><input type="text" id="checkno" name="checkno" maxlength="15" style="width:120px;"  value="<?=$cvhdr->porefno?>" /></td> 
                                         </tr>
-                                         <tr>
-                                          	<td><label for="terms">Terms:</label></td>
-                                            <td><input type="number" id="terms" name="terms" style="width:100px;"  min="0" max="100"  value="<?=$apvhdr->terms?>"  />
-                                            
-                                            <td><label for="totdebit">Total Debit:</label></td>
-                                            <td><input type="text" id="totdebit" name="totdebit" maxlength="19" style="width:120px;" value="<?php echo isset($apvhdr->totdebit) ? $apvhdr->totdebit:"0.00"; ?>" class="number currency" readonly  /></td>
-                                           
-                                        </tr>
-                                         <tr>
-                                        	<td><label for="totqty">Total Quantity:</label></td>
-                                            <td><input type="text" id="totqty" name="totqty" maxlength="19" style="width:120px;"  class="number currency" readonly value="<?php echo isset($apvhdr->totqty) ? $apvhdr->totqty:"0"; ?>"  /></td>
-                                            
-                                            <td><label for="totcredit">Total Credit:</label></td>
-                                            <td><input type="text" id="totcredit" name="totcredit" maxlength="19" style="width:120px;"  class="number currency" value="<?php echo isset($apvhdr->totcredit) ? $apvhdr->totcredit:"0.00"; ?>" readonly /></td>  
-                                        </tr> 
-                                        
+
                                          <tr>
                                          	<td><label for="totamount">Total Amount:</label></td>
-                                            <td><input type="text" id="totamount" name="totamount" maxlength="19" style="width:120px;"  class="number currency" readonly value="<?php echo isset($apvhdr->totamount) ? $apvhdr->totamount:"0.00"; ?>"  />
-                                            	<input type="hidden" id="id" name="id" value="<?=$apvhdr->id?>" />
-                                                <input type="hidden" id="totline" name="totline" value="<?=$apvhdr->totline?>" />
-                                                <input type="hidden" id="posted" name="posted" value="<?=$apvhdr->posted?>" />
+                                            <td><input type="text" id="totamount" name="totamount" maxlength="19" style="width:120px;"  class="number currency" readonly value="<?php echo isset($cvhdr->totamount) ? $cvhdr->totamount:"0.00"; ?>"  />
+                                            	<input type="hidden" id="id" name="id" value="<?=$cvhdr->id?>" />
+                                                <input type="hidden" id="totline" name="totline" value="<?=$cvhdr->totline?>" />
+                                                <input type="hidden" id="posted" name="posted" value="<?=$cvhdr->posted?>" />
                                             </td>
                                         	
-                                             <td><label for="balance">Balance:</label></td>
-                                            <td><input type="text" id="balance" name="balance" style="width:120px;" value="<?php echo isset($apvhdr->balance) ? $apvhdr->balance:"0.00"; ?>" class="number currency" readonly  />
-                                            
+                                             <td><label for="cancelled">Cancel:</label></td>
+                                            <td>
+                                            	<input type="checkbox" class="toggle" data-input="cancelled" <?php echo ($cvhdr->cancelled==1) ? 'checked="checked"':''; ?> />
+                                            	<input type="hidden" id="cancelled" name="cancelled" value="<?=$cvhdr->cancelled?>" />
+                                            </td>  
                                         </tr>    
                                           <tr>
                                         	<td>&nbsp;</td>
                                             <td>&nbsp;</td>
-                                            
-                                            <td><label for="cancelled">Cancel:</label></td>
-                                            <td>
-                                            	<input type="checkbox" class="toggle" data-input="cancelled" <?php echo ($apvhdr->cancelled==1) ? 'checked="checked"':''; ?> />
-                                            	<input type="hidden" id="cancelled" name="cancelled" value="<?=$apvhdr->cancelled?>" />
-                                            </td>  
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>  
                                         </tr>   
                                        
                                         
@@ -618,9 +585,9 @@ $(document).ready(function() {
                                             <td>
                                             	
                                             	<button id="frm-btn-submit" class="minibutton">Save</button>
-                                                <button id="frm-btn-post" class="minibutton" type="button" <?php echo isset($apvhdr->id) ? "":"disabled"; ?> >Post</button>
+                                                <button id="frm-btn-post" class="minibutton" type="button" <?php echo isset($cvhdr->id) ? "":"disabled"; ?> >Post</button>
 				                            	<!--<button id="frm-btn-save" class="minibutton" type="button">Save</button>-->
-                                                <button id="frm-btn-delete" class="minibutton" type="button" <?php echo isset($apvhdr->id) ? "":"disabled"; ?> >Delete</button>
+                                                <button id="frm-btn-delete" class="minibutton" type="button" <?php echo isset($cvhdr->id) ? "":"disabled"; ?> >Delete</button>
                                                 <a href="<?=$relativeslash?>accounts-payable-hdr"  class="minibutton">Cancel</a>
                                                  <button id="frm-btn-dtj" class="minibutton" type="button">Form to JSON</button>
 				                    			<!--
@@ -666,7 +633,7 @@ $(document).ready(function() {
                                     -->
 	                            </form>
                              </div>
-                            <table class="tb-data tb-detail" data-apvhdrid="<?=$apvhdr->id?>" width="100%" cellspacing="0" cellpadding="0">
+                            <table class="tb-data tb-detail" data-apvhdrid="<?=$cvhdr->id?>" width="100%" cellspacing="0" cellpadding="0">
                             <thead>
 								<tr style="display:">
 									<th>Item</th>

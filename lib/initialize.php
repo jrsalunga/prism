@@ -65,6 +65,8 @@ require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.todo.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.apledger.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.stockcard.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.ledger.php');
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.cvhdr.php');
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.cvdtl.php');
 
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.category.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.item.php');

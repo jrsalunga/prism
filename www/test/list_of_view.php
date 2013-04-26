@@ -23,5 +23,10 @@ $vApvdtl = "SELECT a.id, b.descriptor as item, a.qty, a.unitcost, a.amount
 			FROM apvdtl a, item b
 			WHERE a.itemid = b.id
 			ORDER BY 2";
-
+			
+$vCvhdr = "SELECT a.id, a.refno, a.date, b.code as supplier, a.bankcode, a.checkno, a.totamount, a.posted
+			FROM cvhdr a, supplier b
+			WHERE a.supplierid = b.id
+			ORDER BY a.date DESC";
+			
 ?>

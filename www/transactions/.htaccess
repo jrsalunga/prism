@@ -5,4 +5,7 @@ RewriteRule ^accounts-payable-hdr(\/.*)*$ /prism/transactions/accounts-payable-h
 RewriteRule ^accounts-payable(\/.*)*$ /prism/transactions/accounts-payable.php
 RewriteRule ^accounts-payable-print(\/.*)*$ /prism/transactions/accounts-payable-print.php
 
+RewriteRule ^check-hdr(\/.*)*$ /prism/transactions/check-hdr.php
+RewriteRule ^check(\/.*)*$ /prism/transactions/check.php
+
 

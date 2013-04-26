@@ -4,7 +4,7 @@ include_once('../../lib/initialize.php');
 
 
 
-$sql = "DESCRIBE apledger";
+$sql = "DESCRIBE cvdtl";
 $rows = $database->query($sql);
 
 while($row = $database->fetch_row($rows)) {
