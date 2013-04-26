@@ -11,7 +11,8 @@ class CleanURL {
 		$uri = $_SERVER['REQUEST_URI'];
 		$script = $_SERVER['SCRIPT_NAME'];
 		/* get extension */
-		$ext = end( explode(".",$script) );
+		$x = explode(".",$script);
+		$ext = end($x);
 
 		/* if extension is found in URL, eliminate it */
 		if(strstr($uri,".")) {

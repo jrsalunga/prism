@@ -1148,24 +1148,26 @@ function postingApvhdr($id){
 
         
         $last_apledger = Apledger::get_last_record($apvhdr->supplierid);
-        $last_apledger->currbal = isset($last_apledger->currbal) ? $last_apledger->currbal:0;
+        $last_apledger_currbal = isset($last_apledger->currbal) ? $last_apledger->currbal:0;
 
-        /*
+        
         $apledger = new Apledger();
         $apledger->supplierid   = $apvhdr->supplierid;
         $apledger->txndate      = $apvhdr->date;
         $apledger->txncode      = 'APV';
         $apledger->txnrefno     = $apvhdr->refno;
         $apledger->amount       = $apvhdr->totamount;
-        $apledger->prevbal      = $last_apledger->currbal;
+        $apledger->prevbal      = $last_apledger_currbal;
         $apledger->currbal      = $apledger->get_currbal();
-        */
-
-
-        $r = Apledger2::create('APV', $apvhdr->refno, $apvhdr->date, $apvhdr->totamount, $last_apledger->currbal, $apvhdr->supplierid);
         
-        //if(!$apledger->save()){
-        if(!$r) {        
+        if(!$apledger->save()){
+        
+        /*        
+        $apledger = Apledger2::post('APV', $apvhdr->refno, $apvhdr->date, $apvhdr->totamount, $last_apledger_currbal, $apvhdr->supplierid);
+        if(!$apledger) { 
+        */   
+
+
             $database->rollback();
             echo json_encode($apledger->result_respone(1,'1156'));
             exit();
@@ -1241,7 +1243,7 @@ function postingApvhdr($id){
 
 
                 $last_stockcard = Stockcard::get_last_record($item->id);
-                $last_stockcard->currbal = isset($last_stockcard->currbal) ? $last_stockcard->currbal:0;
+                $last_stockcard_currbal = isset($last_stockcard->currbal)  ? $last_stockcard->currbal:0;
                 //$last_stockcard->currbal = $item->onhand;
 
                 $stockcard = new Stockcard();
@@ -1251,7 +1253,7 @@ function postingApvhdr($id){
                 $stockcard->txncode     = 'APV';
                 $stockcard->txnrefno    = $apvhdr->refno;
                 $stockcard->qty         = $apv_items->qty;
-                $stockcard->prevbal     = $last_stockcard->currbal;
+                $stockcard->prevbal     = $last_stockcard_currbal;
                 $stockcard->currbal     = $stockcard->get_currbal();
                 //$stockcard->prevbalx    =;
                 //$stockcard->currbalx    =;

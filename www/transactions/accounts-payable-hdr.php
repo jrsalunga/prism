@@ -68,7 +68,7 @@ $(document).ready(function() {
 	initMenu();
 	
 	var oTable = $('.tb-data').dataTable( {
-		"aaSorting": [[ 1, "desc" ],[ 0, "desc" ]],
+		"aaSorting": [[ 0, "desc" ],[ 1, "desc" ]],
         "sPaginationType": "full_numbers",
 		"bProcessing": true,
         "bServerSide": true,

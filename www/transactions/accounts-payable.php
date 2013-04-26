@@ -649,6 +649,7 @@ $(document).ready(function() {
 								//echo json_encode($apvdtls);
 								$totqty = 0;
 								$totamount = 0;
+								if($apvdtls!=NULL) {
 								
 							  	foreach($apvdtls as $apvdtl){
 									$item_name = Item::row($apvdtl->itemid,0);
@@ -666,7 +667,8 @@ $(document).ready(function() {
 									
 									$totqty = $totqty + $apvdtl->qty;
 									$totamount = $totamount + $apvdtl->amount;
-								}		
+								}	
+								}
 								?>
 							</tbody>
                             <tfoot>

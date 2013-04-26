@@ -40,8 +40,8 @@ class Ledger extends DatabaseObject {
 	public static $IncTxnCodeList = array();
 	public static $DecTxnCodeList = array();
 	
-	public function GetChange($tcTxnCode, $tnValue) {
-	   if(array_search($tnValue, static::$IncTxnCodeList)) {
+	public static function GetChange($tcTxnCode, $tnValue) {
+	   if(false !== array_search($tcTxnCode, static::$IncTxnCodeList)) {
 	      return $tnValue;
 	   } else {
 	      return $tnValue * (-1);
@@ -73,20 +73,30 @@ class Apledger2 extends Ledger{
 	public static $IncTxnCodeList = array('APV','CM');
 	public static $DecTxnCodeList = array('CV','DM');
 	 
-    public function create($tcTxnCode, $tcRefno, $tdTxnDate, $tnAmount, $tnCurrBalance, $tnSupplierId ) {
+    public static function post($tcTxnCode, $tcRefno, $tdTxnDate, $tnAmount, $tnCurrBalance, $tnSupplierId ) {
 		
 		$apledger 				= new self();
-		$apledger->amount 		= $apledger->GetChange($tcTxnCode, $tnAmount);
+		$apledger->amount 		= self::GetChange($tcTxnCode, $tnAmount);
 		$apledger->prevbal 		= $tnCurrBalance;
 		$apledger->currbal 		= $apledger->prevbal + $apledger->amount;
-		$apledger->date 		= $tdTxnDate;
+		$apledger->txndate 		= $tdTxnDate;
 		$apledger->txnrefno 	= $tcRefno;
 		$apledger->txncode  	= $tcTxnCode; 	
 		$apledger->supplierid 	= $tnSupplierId;
 		
-		return parent::create() ? true : false;
+		return $apledger->create() ? $apledger : false;
 		
 		
+	}
+	
+	function get_currbal(){
+		return $this->currbal = $this->amount + $this->prevbal;	
+	}
+	
+	public static function get_last_record($supplierid=0){
+		$sql = "SELECT * FROM ".self::$table_name." WHERE supplierid = '". $supplierid ."' ORDER BY postdate DESC LIMIT 1";
+		$result_array = self::find_by_sql($sql);
+		return !empty($result_array) ? array_shift($result_array) : false;	
 	}
 	
 	
