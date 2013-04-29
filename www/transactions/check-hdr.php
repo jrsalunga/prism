@@ -72,11 +72,11 @@ $(document).ready(function() {
         "sPaginationType": "full_numbers",
 		"bProcessing": true,
         "bServerSide": true,
-        "sAjaxSource": "../www/api/datatables/v/apvhdr",
+        "sAjaxSource": "../www/api/datatables/v/cvhdr",
 	//	"sAjaxSource": "../www/test/datatable_test.php"
 		"fnHeaderCallback":  function( nHead, aData, iStart, iEnd, aiDisplay ) { 
 				
-				var title = ["Ref. #","Date","Location","Supplier","Terms","Total Quantity","Total Amount","Total Debit","Total Credit","Balance","Posted"];
+				var title = ["Ref. #","Date","Supplier","Bank Code", "Check #","Total Amount","Posted"];
 				//console.log(title.length);
 				for(i=0; i<=title.length-1; i++) {
 					$('th:eq('+ i +')', nHead).text(title[i]);
@@ -85,16 +85,10 @@ $(document).ready(function() {
 		"aoColumns": [
             { "mData": "refno" },
 			{ "mData": "date" },
-			{ "mData": "location" },
 			{ "mData": "supplier" },
-			//{ "mData": "supprefno" },
-			//{ "mData": "porefno" },
-			{ "mData": "terms" },
-			{ "mData": "totqty" },
+			{ "mData": "bankcode" },
+			{ "mData": "checkno" },
 			{ "mData": "totamount" },
-			{ "mData": "totdebit" },
-			{ "mData": "totcredit" },
-            { "mData": "balance" },
 			 { "mData": "posted" }
 			],
 	  
@@ -103,17 +97,17 @@ $(document).ready(function() {
 	            $(nRow).attr("data-id", aData.id);
 				$(nRow).attr("id", aData.id);
 				
-				$('td:eq(6),td:eq(7),td:eq(8),td:eq(9)', nRow).addClass("currency").each(function(){
+				$('td:eq(5)', nRow).addClass("currency").each(function(){
 					$(this).toCurrency();
 				});
-				$('td:eq(4), td:eq(5)', nRow).addClass("number");
+				//$('td:eq(4), td:eq(5)', nRow).addClass("number");
 				
 				
-				var post = $('td:eq(10)', nRow).text();
+				var post = $('td:eq(6)', nRow).text();
 				if(post==='0'){
-					$('td:eq(10)', nRow).text('✖');
+					$('td:eq(6)', nRow).text('✖');
 				} else {
-					$('td:eq(10)', nRow).text('✔');
+					$('td:eq(6)', nRow).text('✔');
 				}
 				 
 				//console.log(post);
@@ -146,14 +140,8 @@ $(document).ready(function() {
 		clicks++;  //count clicks
         if(clicks === 1) {
             timer = setTimeout(function() {
-            
-			
-			console.log('accounts-payable/'+id);
-			
-			window.location.href = "accounts-payable/"+id;
-			
-					
-		
+
+			window.location.href = "check/"+id;
 			
             clicks = 0;  //after action performed, reset counter
             }, 200);
@@ -288,7 +276,7 @@ $(document).ready(function() {
                         </div>
                         -->
                         <div id="c-content-tb-data">
-                        	<table id="datatable-apvhdr" class="tb-data" cellpadding="0" cellspacing="0" width="100%">
+                        	<table id="datatable-cvhdr" class="tb-data" cellpadding="0" cellspacing="0" width="100%">
 		                       <!-- <thead>
 		                          <tr>
                                   	 

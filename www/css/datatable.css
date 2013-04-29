@@ -22,7 +22,8 @@
     width:5%;
 }
 
-#datatable-apvhdr tbody tr td:last-of-type {
+#datatable-apvhdr tbody tr td:last-of-type,
+#datatable-cvhdr tbody tr td:last-of-type {
     text-align:center;
     width:5%;
 }

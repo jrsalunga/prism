@@ -1724,8 +1724,97 @@ function deleteParentChild(id) {
 function saveTableModel(){
 	var id = $(".table-model #id").val();
 	var role = $(".table-model").data("role");
+	var respone;
+
+	if(role==='parent') {
+		//console.log('parent role');
+		
+		if(id === null || id === undefined || id === ''){
+			addParentChild();
+		} else {
+			updateParentChild(id);
+		}	
+	} else {
+		//console.log('single role');
+
+		if(id === null || id === undefined || id === ''){
+			console.log('addData3');
+			respone = addData3();
+		} else {
+			console.log('updateData3');
+			respone = updateData3(id);
+		}
+		console.log(respone);
+		renderDetails(respone);	
+	}
+
+	if(!respone.error) {
+    	set_alert('success','Well done!', 'You successfully saved');
+
+    	$("#frm-btn-delete").removeAttr('disabled');
+    	$("#frm-btn-post").removeAttr('disabled');
+    } else {
+    	set_alert('error','Oh snap!', respone.error);
+    }
+
+
+
 }
 
+
+/*
+*  function for saveTableModel()
+*/
+function addData3(){
+	var form = $(".table-model");
+	var formData = form.formToJSON();	
+    var	table = isset(table) ? table : form.data('table');
+    var aData; 
+
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+		url: 'http://localhost/prism/www/api/s/'+ table ,
+        dataType: "json",
+        async: false,
+        data: formData,
+        success: function(data, textStatus, jqXHR){
+			aData = data; 			
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert(textStatus + 'Failed on creating '+ table +' data');
+        }
+    });
+	
+	return aData;
+}
+
+/*
+*  function for saveTableModel()
+*/
+function updateData3(id) {
+	var form = $(".table-model");	
+    var formData = form.formToJSON();	
+    var	table = isset(table) ? table : form.data('table');
+    var aData;
+	
+    $.ajax({
+        type: 'PUT',
+        contentType: 'application/json',
+        url: 'http://localhost/prism/www/api/s/'+ table +'/'+ id,
+        dataType: "json",
+        async: false,
+        data: formData,
+        success: function(data, textStatus, jqXHR){
+            aData = data; 	
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert(textStatus + 'Failed on getting '+ table +' header');
+        }
+    });
+
+    return aData;
+}
 
 
 

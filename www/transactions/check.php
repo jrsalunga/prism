@@ -148,7 +148,7 @@ function itemSearch(){
        });
 }
 
-
+/*
 function saveParentChild() {
 	var id = $(".table-model #id").val();
 		
@@ -158,6 +158,7 @@ function saveParentChild() {
 		updateParentChild(id);
 	}	
 }
+*/
 	
 	
 function saveDetail() {
@@ -329,7 +330,7 @@ $(document).ready(function() {
 						}, 
 						messages: {	
 						},	
-						submitHandler: saveParentChild
+						submitHandler: saveTableModel
 					});
 					
 	$('.table-detail').validate({
@@ -518,7 +519,7 @@ $(document).ready(function() {
                         </div>
                         <div id="c-frm-container">
                         	<div id="frm-alert"></div>
-                        	<form id="frm-cvhdr" name="frm-cvhdr" class="table-model" data-table="cvhdr" data-role="parent" action="" method="post">
+                        	<form id="frm-cvhdr" name="frm-cvhdr" class="table-model" data-table="cvhdr" data-role="single" action="" method="post">
                             	<table cellpadding="0" cellspacing="0" border="0">
                                 	<tbody>
                                     	<tr>
@@ -548,14 +549,14 @@ $(document).ready(function() {
 						                   		</select>
                                             </td>
                                           	<td><label for="payee">Payee:</label></td>
-                                        	<td><input id="payee" type="text" maxlength="50" name="payee" value="<?=$cvhdr->payee?>" /></td>
+                                        	<td><input id="payee" type="text" maxlength="50" name="payee" value="<?=$cvhdr->payee?>" required /></td>
                                         </tr>
                                         <tr>
                                         	<td><label for="bankcode">Bank Code:</label></td>
-                                            <td><input type="text" id="backcode" name="bankcode" maxlength="5" style="width:120px;" value="<?=$cvhdr->bankcode?>" /></td>
+                                            <td><input type="text" id="backcode" name="bankcode" maxlength="5" style="width:120px;" value="<?=$cvhdr->bankcode?>" required /></td>
                                             
                                             <td><label for="checkno">Check No:</label></td>
-                                            <td><input type="text" id="checkno" name="checkno" maxlength="15" style="width:120px;"  value="<?=$cvhdr->porefno?>" /></td> 
+                                            <td><input type="text" id="checkno" name="checkno" maxlength="15" style="width:120px;"  value="<?=$cvhdr->checkno?>" required /></td> 
                                         </tr>
 
                                          <tr>
@@ -588,7 +589,7 @@ $(document).ready(function() {
                                                 <button id="frm-btn-post" class="minibutton" type="button" <?php echo isset($cvhdr->id) ? "":"disabled"; ?> >Post</button>
 				                            	<!--<button id="frm-btn-save" class="minibutton" type="button">Save</button>-->
                                                 <button id="frm-btn-delete" class="minibutton" type="button" <?php echo isset($cvhdr->id) ? "":"disabled"; ?> >Delete</button>
-                                                <a href="<?=$relativeslash?>accounts-payable-hdr"  class="minibutton">Cancel</a>
+                                                <a href="<?=$relativeslash?>check-hdr"  class="minibutton">Cancel</a>
                                                  <button id="frm-btn-dtj" class="minibutton" type="button">Form to JSON</button>
 				                    			<!--
                                                 <button id="frm-btn-cancel" class="minibutton" type="button">Cancel</button>  

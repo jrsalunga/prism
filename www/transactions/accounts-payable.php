@@ -475,8 +475,10 @@ $(document).ready(function() {
 								<div class="kk">Transactions</div>
                            	</div>
                             <ul class="fd">
-                            	<li  class="active"><a href="<?=$relativeslash?>accounts-payable-hdr">Accounts Payable</a></li>
                             	
+                            	<li class="active"><a href="<?=$relativeslash?>accounts-payable-hdr">Accounts Payable</a></li>
+                            	<li><a href="<?=$relativeslash?>check-hdr">Check </a></li>
+                                <li><a href="<?=$relativeslash?>invoice">Invoice</a></li>
                               
                             </ul>
                         </div>	

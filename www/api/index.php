@@ -379,8 +379,14 @@ function updateRealTable($table, $id) {
         echo json_encode($oTable);    
 
     } else {
-        echo '{"error":" error on saving '.mysql_error().'"}';
+        if(mysql_error()){
+            echo '{"error":" error on saving '.mysql_error().'"}';
         #echo json_encode($success); 
+        } else {
+            echo '{"warning":" Nothing to update"}';
+            #echo json_encode($success); 
+        }
+        
     }    
 
 }
@@ -867,7 +873,9 @@ function searchTable($table) {
     $maxRows = $database->escape_value($request->get('maxRows'));
     $maxRows = isset($maxRows) ? $maxRows : 25;
 
-    $sql = "SELECT * FROM ". $table ." WHERE (code LIKE '%". $q ."%' OR `descriptor` LIKE '%". $q ."%') ORDER BY code asc LIMIT 0, ". $maxRows; 
+    $sql = "SELECT * FROM ". $table ." WHERE ( `code` LIKE '%". $q ."%' OR 
+                                                `descriptor` LIKE '%". $q ."%' 
+                                        ) ORDER BY code asc LIMIT 0, ". $maxRows; 
 
     $sTable = ucfirst($table);
     
