@@ -66,6 +66,9 @@ $apvhdr = Apvhdr::find_by_id($apvhdrid);
 
 
 <div id="page-wrap">
+	<div class="isposted" style="visibility: <?=$apvhdr->posted==1?"visible":"hidden"?>">
+    	<h1>Posted</h1>
+    </div>
     <div id="header">
     	<div id="main-logo">
             

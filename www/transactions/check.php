@@ -112,7 +112,7 @@ function itemSearch(){
             source: function( request, response ) {
                 $.ajax({
 					type: 'GET',
-					url: "http://localhost/prism/www/api/search/item",
+					url: "http://localhost/prism/www/api/search/txn/v/apvhdr",
                     dataType: "json",
                     data: {
                         maxRows: 25,
@@ -121,8 +121,9 @@ function itemSearch(){
                     success: function( data ) {
                         response( $.map( data, function( item ) {
                             return {
-                                label: item.code + ' - ' + item.descriptor,
-                                value: item.code,
+                                label: item.refno + ' - ' + item.supplier + ' - ' + item.totamount,
+                                value: item.refno,
+								amount: item.totamount,
 								id: item.id
                             }
                         }));
@@ -134,12 +135,12 @@ function itemSearch(){
 				//console.log(ui);
                 log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
 	
-				$("#itemid").val(ui.item.id); /* set the selected id */
-				
+				$(".table-detail #apvhdrid").val(ui.item.id); /* set the selected id */
+				$(".table-detail #totamount").val(ui.item.amount).toNumberFormat();
             },
             open: function() {
                 $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-				$("#itemid").val('');  /* remove the id when change item */
+				$(".table-detail #apvhdrid").val('');  /* remove the id when change item */
             },
             close: function() {
                 $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
@@ -235,6 +236,7 @@ function postApvhdr(id){
 	return aData;		 
 }
 
+/*
 function postCancelledApvhdr(id){
 	var form = $(".table-model");
 	var formData = form.formToJSON();	
@@ -263,6 +265,7 @@ function postCancelledApvhdr(id){
 
 	return aData;		 
 }
+*/
 
 
 
@@ -302,9 +305,10 @@ $(document).ready(function() {
 		} else {
 			
 			if($("#cancelled").val()==1) {
-				var stat = postCancelledApvhdr(id);
+				var stat = postCancelledTable(id);
 			} else {		
-				var stat = postApvhdr(id);
+				//var stat = postApvhdr(id);
+				set_alert('warning','Ooops!', 'no code for posting yet');
 			}
 			
 			if(stat.status==='success') {
@@ -326,7 +330,10 @@ $(document).ready(function() {
 	
 	$('.table-model').validate({
 						rules: {
-							code: "required"						
+							refno: "required",
+							payee: "required",
+							bankcode: "required",
+							checkno: "required"						
 						}, 
 						messages: {	
 						},	
@@ -615,15 +622,11 @@ $(document).ready(function() {
                         
                         <div id="c-content-tb-data">
                         	<div class="form-detail">
-	                        	<form id="frm-apvdtl" name="frm-apvdtl" class="table-detail" method="post" action="" data-table="apvdtl">
+	                        	<form id="frm-cvdtl" name="frm-cvdtl" class="table-detail" method="post" action="" data-table="cvdtl">
                                 	<input type="hidden" name="id" id="id"/>
-	                            	<input type="search" class="search-detail" placeholder="Search item" required results="10" />
-		                            <input type="hidden" name="itemid" id="itemid" />
-		                            <input type="number" name="qty" id="qty" step="1" min="0" max="9999999" placeholder="Quantity" class="variable" required  />
-		                            <input type="number" name="unitcost" id="unitcost" pattern="^\d*(\.\d{1,2}$)?" step="0.01" placeholder="Unit Cost" class="variable float" required  />
-		                            <input type="hidden" name="amount" id="amount" class="variable-result" />
-                                    <!--<input type="number" name="amount" id="amount" value="0.00" readonly />-->
-		                            <input type="text" name="damount" id="damount" class="number variable-result-view" value="0.00" disabled />
+	                            	<input type="search" class="search-detail" placeholder="Search ref #" required results="10" />
+		                            <input type="hidden" name="apvhdrid" id="apvhdrid" />
+		                            <input type="text" name="totamount" id="totamount" class="currency" readonly value="0.00">
 		                            <button id="frm-detail-save-item" class="minibutton">Save Item</button>
                                     <button id="frm-detail-clear-item" class="minibutton" type="button">Clear</button>
                                      <!--
@@ -634,18 +637,16 @@ $(document).ready(function() {
                                     -->
 	                            </form>
                              </div>
-                            <table class="tb-data tb-detail" data-apvhdrid="<?=$cvhdr->id?>" width="100%" cellspacing="0" cellpadding="0">
+                            <table class="tb-data tb-detail" data-cvhdrid="<?=$cvhdr->id?>" width="100%" cellspacing="0" cellpadding="0">
                             <thead>
 								<tr style="display:">
-									<th>Item</th>
-									<th>Quantity</th>
-									<th>Unit Cost</th>
-									<th>Amount</th>
+									<th>Ref #</th>
+                                    <th>Amount</th>
 								</tr>
 							</thead>
 							<tbody>
 								<?php
-								$apvdtls = Apvdtl::find_all_by_field_id('apvhdr',$apvhdr->id);
+								$cvdtls = Apvdtl::find_all_by_field_id('apvhdr',$apvhdr->id);
 								
 								//echo json_encode($apvdtls);
 								$totqty = 0;
@@ -674,10 +675,7 @@ $(document).ready(function() {
 							</tbody>
                             <tfoot>
 								<tr>
-									<td colspan="2">
-									Total Unit:
-									<span id="f-total-qty" class="total"><?=number_format($totqty)?></span>
-									</td>
+									
 									<td colspan="2">
 									Total Amount:
 									<span id="f-total-amount" class="total float"><?=number_format($totamount,2)?></span>

@@ -29,4 +29,6 @@ $vCvhdr = "SELECT a.id, a.refno, a.date, b.code as supplier, a.bankcode, a.check
 			WHERE a.supplierid = b.id
 			ORDER BY a.date DESC";
 			
+$vCvdtl = "SELECT ";			
+			
 ?>

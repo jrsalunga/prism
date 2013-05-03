@@ -92,13 +92,15 @@ $app->get('/s/:table/:id',  'getRealTable');
 $app->post('/s/:table', 'addRealTable');
 $app->put('/s/:table/:id',  'updateRealTable');
 
-
-
-
+// datatable API
 $app->get('/datatables/:table',  'datatables');
 $app->get('/datatables/v/:table',  'datatables2');
 
+
 $app->get('/search/:table', 'searchTable');
+$app->get('/search/txn/v/:table', 'searchTxnViewTable');
+
+
 
 $app->post('/detail/:table', 'getDetail'); // get the item to put in html table
 $app->post('/post/detail/:table', 'postDetail');
@@ -108,6 +110,7 @@ $app->put('/post/detail/:table/:table2/:apvhdrid', 'putDetail');
 // posting
 $app->post('/txn/post/apvhdr/:id', 'postingApvhdr');
 $app->post('/txn/post/apvhdr/:id/cancelled', 'postingCancelledApvhdr');
+$app->post('/txn/post/:table/:id/cancelled', 'postingCancelledTable');
 
 
  /*****************************  Run App **************************/
@@ -887,6 +890,33 @@ function searchTable($table) {
 }
 
 
+function searchTxnViewTable($table) {
+
+    $app = \Slim\Slim::getInstance();
+    $database = MySQLDatabase::getInstance();
+
+    $request = $app->request();
+
+    $q = $database->escape_value($request->get('q'));
+    $maxRows = $database->escape_value($request->get('maxRows'));
+    $maxRows = isset($maxRows) ? $maxRows : 25;
+
+    //$sTable = ucfirst($table);
+    $vTable = substr_replace($table, 'v', 0, 0);
+    //$ovTable = $vTable::find_by_id($oTable->id);
+
+    $sql = "SELECT * FROM ". $vTable ." WHERE `refno` LIKE '%". $q ."%' ORDER BY date DESC LIMIT 0, ". $maxRows; 
+
+    //$sTable = ucfirst($table);
+    
+    $oTable = $vTable::find_by_sql($sql);
+
+
+    echo json_encode( $oTable );
+
+}
+
+
 
 function getDetail($table) {
 
@@ -1374,6 +1404,55 @@ function postingCancelledApvhdr($id){
     }
 
     echo json_encode($respone); 
+    unset($apvhdr_last);
+}
+
+
+function postingCancelledTable($table,$id){
+
+    $app = \Slim\Slim::getInstance();
+    //$database = MySQLDatabase::getInstance();
+    global $database;
+    $sTable = ucfirst($table); // apvdtl = Apvtable
+
+    $iTable = $sTable::find_by_id($id);
+
+    if($iTable) {
+
+        $apvhdr_last = new $sTable();
+        $apvhdr_last->posted = 1;
+        $apvhdr_last->cancelled = 1;
+        $apvhdr_last->id = $id;
+
+        if($apvhdr_last->save()){
+            
+            $respone = array(
+                    'status' => 'success', 
+                    'code' => '200',
+                    'message' => 'success on posting cancelled APV',
+                    'data' => array(
+                        'apvhdr' => $apvhdr_last,
+                    )
+                );
+        } else {
+            
+            $respone = array(
+                'status' => 'error', 
+                'code' => '404',
+                'message' => 'error on posting cancelled APV'
+            );
+        }
+    } else {
+
+        $respone = array(
+                'status' => 'error', 
+                'code' => '404',
+                'message' => 'no id - '. $id .' record found on table: '. $iTable 
+            );
+    }
+
+    echo json_encode($respone); 
+
 }
 
 

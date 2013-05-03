@@ -130,6 +130,26 @@ table td, table th {
     padding: 10px;
 }
 
+.isposted{
+	position:absolute; 
+	top:350px; 
+	left:300px;
+	padding: 20px; 
+	border: 2px dashed red;
+	z-index: 10;
+	
+	
+	-webkit-transform: rotate(30deg);
+    -moz-transform: rotate(30deg);
+	border-radius: 10px;
+	
+}
+
+.isposted > h1 {
+	font-size: 50px;
+	color: red;
+}
+
 
 
 

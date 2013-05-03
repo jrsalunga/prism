@@ -242,6 +242,23 @@ class DatabaseObject {
 	
 	}
 	
+	public static function find_all_posted($field=0,$id=0,$posted=true) {
+		
+		if(false !== array_search('posted', static::$db_fields)) {
+		
+			if($posted) {
+				$result_array = static::find_by_sql("SELECT * FROM ". static::$table_name ." WHERE {$field}id='{$id}' AND posted = 1");
+				return !empty($result_array) ? $result_array : false;
+			} else {
+				$result_array = static::find_by_sql("SELECT * FROM ". static::$table_name ." WHERE {$field}id='{$id}' AND posted = 0");
+				return !empty($result_array) ? $result_array : false;
+			}
+		} else {
+			return false;	
+		}
+  	}
+	
+	
 	public function result_respone($no=NULL, $msg=NULL){
 		global $database;
 		

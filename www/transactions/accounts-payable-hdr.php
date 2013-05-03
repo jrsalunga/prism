@@ -102,6 +102,9 @@ $(document).ready(function() {
 				//console.log(aData);
 	            $(nRow).attr("data-id", aData.id);
 				$(nRow).attr("id", aData.id);
+				var recno = iDisplayIndex+1;
+				
+				$('td:eq(0)', nRow).attr('title', recno);
 				
 				$('td:eq(6),td:eq(7),td:eq(8),td:eq(9)', nRow).addClass("currency").each(function(){
 					$(this).toCurrency();
@@ -162,6 +165,7 @@ $(document).ready(function() {
 			e.preventDefault()
 			
             console.log('double click '+ id);  //perform double-click action
+			window.open('accounts-payable-print/'+id);
 			
             clicks = 0;  //after action performed, reset counter
         }

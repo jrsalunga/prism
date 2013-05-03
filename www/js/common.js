@@ -14,6 +14,11 @@ $(document).ready(function() {
 	}).on('blur', function(){
 		$(this).toNumberFormat();
 	});
+
+
+	$(".table-detail .currency").each(function(){
+		$(this).toNumberFormat();	
+	});
 	
 	
 	
@@ -125,12 +130,12 @@ $(document).ready(function() {
 function postingStatus(){
 	//console.log($(".table-model #posted").val());
 	
-	if($(".table-model #posted").val()==='1'){
-		var postingStatus = 'true';
+	if($(".table-model #posted").val()==='1' || $(".table-model #posted").val()===1){
+		var vpostingStatus = 'true';
 		//console.log(postingStatus);
 		return true;
 	} else {
-		var postingStatus = 'false';
+		var vpostingStatus = 'false';
 		//console.log(postingStatus);
 		return false;	
 	}
@@ -1008,7 +1013,7 @@ function deleteData2(id,oTable) {
 
 
 /**********************************************************************************************************************/
-/********************* table deatils stuff ****************************************************************************/
+/********************* table details stuff ****************************************************************************/
 /**********************************************************************************************************************/
 
 
@@ -1066,7 +1071,7 @@ function addDetailData(data) {
 			} else {	
 				row += '<td data-'+ key +'="'+ data[key] +'" class="currency" >'+ data[key] +'</td>';
 			}
-		  //console.log(data[key]);
+		  console.log(data[key]);
 		  //console.log(key);
 		  len++;
 		}
@@ -1719,8 +1724,9 @@ function deleteParentChild(id) {
 }
 
 
-
-
+/*
+*    new submitdetail handler for saving form data (.table-model)
+*/
 function saveTableModel(){
 	var id = $(".table-model #id").val();
 	var role = $(".table-model").data("role");
@@ -1814,6 +1820,36 @@ function updateData3(id) {
     });
 
     return aData;
+}
+
+
+function postCancelledTable(id){
+	var form = $(".table-model");
+	var formData = form.formToJSON();	
+    var	table = form.data('table');	
+	var aData; 
+
+	$.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+		url: 'http://localhost/prism/www/api/txn/post/'+ table +'/'+ id +'/cancelled',
+        dataType: "json",
+        async: false,
+        //data: formData,
+        success: function(data, textStatus, jqXHR){
+            aData = data;
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert(textStatus + ' Failed on posting data');
+        }
+    });	
+	
+	$(".table-model .currency").each(function(){
+		$(this).toNumberFormat();	
+	});
+
+
+	return aData;		 
 }
 
 
